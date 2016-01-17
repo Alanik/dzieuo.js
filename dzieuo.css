@@ -1,0 +1,38 @@
+﻿body {
+	padding: 0;
+	margin: 0;
+}
+
+#dzieuo {
+	position: relative;
+	height: 400px;
+	width: 98%;
+}
+
+.dz-column {
+	border: 1px solid red;
+	width: 100%;
+	position: absolute;
+	top: 0;
+	left: 0;
+}
+
+.dz-row {
+	border: 1px solid orange;
+}
+
+#dzViewPort {
+	top: 0;
+	left: 0;
+	position: relative;
+}
+
+#dzHorizontalNav {
+	position: absolute;
+	top: 200px;
+}
+
+#dzVerticalNav {
+	position: absolute;
+	top: 300px;
+}

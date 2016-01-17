@@ -1,0 +1,46 @@
+﻿<!DOCTYPE html>
+
+<html lang="en" xmlns="http://www.w3.org/1999/xhtml">
+<head>
+	<link href="dzieuo.css" rel="stylesheet" />
+	<meta charset="utf-8" />
+	<title>dzieuo.js</title>
+</head>
+<body>
+	<div id="dzieuo">
+			<div class="dz-column">
+				<div class="dz-row">
+					page item 1
+				</div>
+			</div>
+			<div class="dz-column" style="height:1400px;">
+				<div class="dz-row">
+					page item 3
+				</div>
+				<div class="dz-row">
+					page item 4
+				</div>
+			</div>
+			<div class="dz-column">
+				<div class="dz-row">
+					page item 5
+				</div>
+				<div class="dz-row">
+					page item 6
+				</div>
+			</div>
+	</div>
+
+	<script src="Lib/jquery-2.0.3.min.js"></script>
+	<script src="dzieuo.js"></script>
+</body>
+</html>
+
+<script type="text/javascript">
+	$( function ()
+	{
+		var dzieuo = $( '#dzieuo' ).dzieuo();
+
+	} );
+
+</script>
