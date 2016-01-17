@@ -32,15 +32,15 @@
 				$dzieuo: $dzieuo,
 				//$viewPort : $viewPort,
 				columns: [ //{ $column : $(column), rows : [ $(row) , $(row) ], numOfRows = rows.length }
-				],
+				]
 				//numOfColumns : columns.length
 			},
-			viewPort: {
+			viewPort : {
 				prevItem: null, // new ViewPortItem(_data.structure, 0, 0 )
 				currentItem: null, // new ViewPortItem(_data.structure, 0, 0 )
 				nextItem: null, // new ViewPortItem(_data.structure, 1, 0 )
 				isAnimationInProgressX: false
-				////isAnimationInProgressY: false
+				// isAnimationInProgressY: false
 			}
 		};
 
