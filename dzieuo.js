@@ -33,6 +33,8 @@
 				$dzieuo: $dzieuo,
 				$viewPort: null,
 				$horizontalPaging: null,
+				$prevHorizontalArrow: null,
+				$nextHorizontalArrow: null,
 				columns: [ //{ $column : $(column), rows : [ $(row) , $(row) ], numOfRows = rows.length }
 				],
 				numOfColumns: 0
@@ -100,14 +102,18 @@
 				structure.$viewPort = $viewPortContainer;
 			},
 			// 4
-			setUpHorizontalNav: function ( $dzieuo )
+			setUpHorizontalNav: function ( structure )
 			{
 				var containerId = "dzHorizontalNav";
 				var prevArrowId = "dzPrevArrow";
 				var nextArrowId = "dzNextArrow";
 
 				var html = "<nav id='" + containerId + "'><a id ='" + prevArrowId + "' href='#' >prev</a><a id='" + nextArrowId + "' href='#'>next</a></nav>"
-				$dzieuo.append( html );
+				var $html = $( html );
+				structure.$dzieuo.append( $html );
+
+				structure.$prevHorizontalArrow = $html.find( "#" + prevArrowId );
+				structure.$nextHorizontalArrow = $html.find( "#" + nextArrowId );
 			},
 			// 5
 			setUpHorizontalPaging: function ( structure )
@@ -170,7 +176,7 @@
 
 				data.structure.$dzieuo.on( "click", ".dz-paging-item", function ()
 				{
-					var targetColumn = $(this).data( "column" );
+					var targetColumn = $( this ).data( "column" );
 					if ( data.viewPort.currentItem.column < targetColumn )
 					{
 						_plugin.beginHorizontalTransition( data, ( $( window ).width() - 20 ), targetColumn );
@@ -201,7 +207,7 @@
 					return false;
 				}
 
-				updatePaging( data.structure.$horizontalPaging, targetColumn);
+				updatePaging( data.structure.$horizontalPaging, targetColumn );
 				moveToNext( data, targetColumn );
 			}
 			else
@@ -212,7 +218,7 @@
 				}
 
 				updatePaging( data.structure.$horizontalPaging, targetColumn );
-				moveToPrevious( data, targetColumn);
+				moveToPrevious( data, targetColumn );
 			}
 
 			function moveToNext( data, targetColumnIndex )
@@ -223,7 +229,8 @@
 				data.viewPort.prevItem.column = data.viewPort.currentItem.column;
 				data.viewPort.nextItem.column = targetColumnIndex;
 				data.viewPort.currentItem.column = targetColumnIndex;
-				
+
+				toggleHorizontalArrowVisibility( targetColumnIndex, data.viewPort.prevItem.column, data.structure );
 
 				$targetColumn.show();
 				$targetColumn.css( { "left": offset - left, "top": 0 } );
@@ -250,13 +257,15 @@
 				data.viewPort.prevItem.column = targetColumnIndex;
 				data.viewPort.currentItem.column = targetColumnIndex;
 
+				toggleHorizontalArrowVisibility( targetColumnIndex, data.viewPort.nextItem.column, data.structure );
+
 				$targetColumn.show();
 				$targetColumn.css( { "left": offset - left, "top": 0 } );
 
 				data.viewPort.isAnimationInProgressX = true;
 
 				data.structure.$viewPort.animate( {
-					"left": ( left - offset)
+					"left": ( left - offset )
 				}, 600, function ()
 				{
 					data.viewPort.nextItem.get$Column().hide();
@@ -274,6 +283,39 @@
 				$item.removeClass( className );
 				var $nextItem = $paging.find( '[data-column="' + targetColumnIndex + '"]' );
 				$nextItem.addClass( className );
+			}
+
+			function toggleHorizontalArrowVisibility( targetIndex, currentIndex, structure )
+			{
+				if ( targetIndex === 0 )
+				{
+					data.structure.$prevHorizontalArrow.fadeOut();
+
+					if ( currentIndex + 1 === structure.numOfColumns)
+					{
+						data.structure.$nextHorizontalArrow.fadeIn();
+					}
+				} else if ( targetIndex === data.structure.numOfColumns - 1 )
+				{
+					data.structure.$nextHorizontalArrow.fadeOut();
+
+					if ( currentIndex === 0 )
+					{
+						data.structure.$prevHorizontalArrow.fadeIn();
+					}
+				}
+				else
+				{
+					if ( currentIndex === 0 )
+					{
+						data.structure.$prevHorizontalArrow.fadeIn();
+					}
+
+					if ( currentIndex === data.structure.numOfColumns - 1 )
+					{
+						data.structure.$nextHorizontalArrow.fadeIn();
+					}
+				}
 			}
 		};
 
@@ -294,7 +336,7 @@
 		_plugin.setUpDataStructure( _data.structure );
 		_plugin.setUpViewPortItems( _data.viewPort, _data.structure.columns );
 		_plugin.setUpViewPort( _data.structure );
-		_plugin.setUpHorizontalNav( _data.structure.$dzieuo );
+		_plugin.setUpHorizontalNav( _data.structure );
 		_plugin.setUpHorizontalPaging( _data.structure );
 		_plugin.setUpVerticalNav( _data.structure.$dzieuo );
 		_plugin.setUpVerticalPaging( _data.structure.$dzieuo );
