@@ -1,250 +1,247 @@
-﻿( function ( $ )
-{
-	function createDzieuo( $dzieuo, params )
-	{
-		"use strict";
+﻿(function ($) {
+    function createDzieuo($dzieuo, params) {
+        "use strict";
 
-		var dzieuoApi;
-		/////////////////////////////////////////
-		//private objects
-		/////////////////////////////////////////
-		var ViewPortItem = function ( columns, column, row )
-		{
-			this.column = column;
-			this.row = row;
+        var dzieuoApi;
 
-			this.get$Column = function ()
-			{
-				return columns[this.column].$column;
-			}
+        /////////////////////////////////////////
+        //private objects
+        /////////////////////////////////////////
+        var ViewPortItem = function (columns, column, row) {
+            this.column = column;
+            this.row = row;
 
-			this.get$Row = function ()
-			{
-				return columns[this.column].rows[this.row];
-			}
-		}
+            this.get$Column = function () {
+                return columns[this.column].$column;
+            }
 
-		///////////////////////////////////////////
-		//private plugin state
-		///////////////////////////////////////////
-		var _data = {
-			structure: {
-				$dzieuo: $dzieuo,
-				//$viewPort : $viewPort,
-				columns: [ //{ $column : $(column), rows : [ $(row) , $(row) ], numOfRows = rows.length }
-				]
-				//numOfColumns : columns.length
-			},
-			viewPort : {
-				prevItem: null, // new ViewPortItem(_data.structure, 0, 0 )
-				currentItem: null, // new ViewPortItem(_data.structure, 0, 0 )
-				nextItem: null, // new ViewPortItem(_data.structure, 1, 0 )
-				isAnimationInProgressX: false
-				// isAnimationInProgressY: false
-			}
-		};
+            this.get$Row = function () {
+                return columns[this.column].rows[this.row];
+            }
+        }
 
-		///////////////////////////////////////////
-		//private plugin initialization methods
-		///////////////////////////////////////////
-		var _plugin = {
-			// call order:
-			// 1
-			setUpDataStructure: function ( structure )
-			{
-				var $columns = structure.$dzieuo.children();
-				var numOfColumns = 0;
-				var numOfRows = 0;
+        ///////////////////////////////////////////
+        //private plugin state
+        ///////////////////////////////////////////
+        var _data = {
+            structure: {
+                $dzieuo: $dzieuo,
+                $viewPort: null,
+                columns: [ //{ $column : $(column), rows : [ $(row) , $(row) ], numOfRows = rows.length }
+                ],
+                numOfColumns: 0
+            },
+            viewPort: {
+                prevItem: null, // new ViewPortItem(_data.structure, 0, 0 )
+                currentItem: null, // new ViewPortItem(_data.structure, 0, 0 )
+                nextItem: null, // new ViewPortItem(_data.structure, 1, 0 )
+                isAnimationInProgressX: false,
+                isAnimationInProgressY: false
+            }
+        };
 
-				$columns.each( function ( columnIndex )
-				{
-					numOfColumns++;
-					var $column = $( this );
-					var column = { "$column": $column, "rows": [] };
+        ///////////////////////////////////////////
+        //private plugin initialization methods
+        ///////////////////////////////////////////
+        var _plugin = {
+            // call order:
+            // 1
+            setUpDataStructure: function (structure) {
+                var $columns = structure.$dzieuo.children();
+                var numOfColumns = 0;
+                var numOfRows = 0;
 
-					structure.columns.push( column );
+                $columns.each(function (columnIndex) {
+                    numOfColumns++;
+                    var $column = $(this);
+                    var column = { "$column": $column, "rows": [] };
 
-					$column.children().each( function ( rowIndex )
-					{
-						numOfRows++;
-						column.rows.push( $( this ) );
-					} );
+                    structure.columns.push(column);
 
-					structure.columns[columnIndex].numOfRows = numOfRows;
+                    $column.children().each(function (rowIndex) {
+                        numOfRows++;
+                        column.rows.push($(this));
+                    });
 
-					numOfRows = 0;
-				} )
+                    structure.columns[columnIndex].numOfRows = numOfRows;
 
-				structure.numOfColumns = numOfColumns;
-			},
-			// 2
-			setUpViewPortItems: function ( viewPort, columns )
-			{
-				viewPort.prevItem = new ViewPortItem( columns, 0, 0 )
-				viewPort.currentItem = new ViewPortItem( columns, 0, 0 );
-				viewPort.nextItem = new ViewPortItem( columns, 1, 0 );
-			},
-			// 3
-			setUpViewPort: function ( structure )
-			{
-				var viewPortContainerId = 'dzViewPort';
-				var $viewPortContainer = $( '<div id="' + viewPortContainerId + '"></div>' );
+                    numOfRows = 0;
+                })
 
-				var $children = structure.$dzieuo.children();
-				$children.hide();
-				$children.detach().appendTo( $viewPortContainer );
-				$dzieuo.append( $viewPortContainer );
+                structure.numOfColumns = numOfColumns;
+            },
+            // 2
+            setUpViewPortItems: function (viewPort, columns) {
+                viewPort.prevItem = new ViewPortItem(columns, 0, 0)
+                viewPort.currentItem = new ViewPortItem(columns, 0, 0);
+                viewPort.nextItem = new ViewPortItem(columns, 1, 0);
+            },
+            // 3
+            setUpViewPort: function (structure) {
+                var viewPortContainerId = 'dzViewPort';
+                var $viewPortContainer = $('<div id="' + viewPortContainerId + '"></div>');
 
-				structure.$viewPort = $viewPortContainer;
-			},
-			// 4
-			setUpHorizontalNavArrows: function ( $dzieuo )
-			{
-				var containerId = "dzHorizontalNav";
-				var prevArrowId = "dzPrevArrow";
-				var nextArrowId = "dzNextArrow";
+                var $children = structure.$dzieuo.children();
+                $children.hide();
+                $children.detach().appendTo($viewPortContainer);
+                $dzieuo.append($viewPortContainer);
 
-				var html = "<nav id='" + containerId + "'><a id ='" + prevArrowId + "' href='#' >prev</a><a id='" + nextArrowId + "' href='#'>next</a></nav>"
-				$dzieuo.append( html );
-			},
-			// 5
-			setUpVerticalNavArrows: function ( $dzieuo )
-			{
-				var containerId = "dzVerticalNav";
-				var prevArrowId = "dzUpArrow";
-				var nextArrowId = "dzDownArrow";
+                structure.$viewPort = $viewPortContainer;
+            },
+            // 4
+            setUpHorizontalNav: function ($dzieuo) {
+                var containerId = "dzHorizontalNav";
+                var prevArrowId = "dzPrevArrow";
+                var nextArrowId = "dzNextArrow";
 
-				var html = "<nav id='" + containerId + "' href='#' '><a id ='" + prevArrowId + "'>up</a><a id='" + nextArrowId + " href='#' '>down</a></nav>"
-				$dzieuo.append( html );
-			},
-			// 6
-			setUpViewPortPositions: function ( viewPort )
-			{
-				var currentViewPortItem = viewPort.currentItem, nextViewPortItem = viewPort.nextItem;
-				var $currentViewPortElement = currentViewPortItem.get$Column(), $nextViewPortElement = nextViewPortItem.get$Column();
-				var leftOffset = $currentViewPortElement.width();
+                var html = "<nav id='" + containerId + "'><a id ='" + prevArrowId + "' href='#' >prev</a><a id='" + nextArrowId + "' href='#'>next</a></nav>"
+                $dzieuo.append(html);
+            },
+            // 5
+            setUpHorizontalPaging: function ($dzieuo, numOfColumns) {
+                var containerId = "dzHorizontalPaging";
+                var pageItemClass = "dz-paging-item";
 
-				$currentViewPortElement.show();
-				$currentViewPortElement.css( { "left": 0, "top": 0 } );
-			},
-			// 7
-			setUpClickHandlers: function ( data )
-			{
-				data.structure.$dzieuo.on( "click", "#dzNextArrow", function ()
-				{
-					_plugin.animateColumns( data, $( window ).width() - 20 );
-				} )
+                var html = "<nav id='" + containerId + "'>";
 
-				data.structure.$dzieuo.on( "click", "#dzPrevArrow", function ()
-				{
-					_plugin.animateColumns( data, -( $( window ).width() - 20 ) );
-				} )
-			}
-		};
+                for (var i = 1; i < numOfColumns; i++) {
+                    html += "<a class='" + pageItemClass + "' href='#' data-index='" + i + "'>";
+                }
 
-		_plugin.animateColumns = function ( data, offset )
-		{
-			if ( data.viewPort.isAnimationInProgressX )
-			{
-				return false;
-			}
+                html += "</nav>";
 
-			// next
-			if ( offset > 0 )
-			{
-				if ( ( data.viewPort.currentItem.column + 1 ) === data.structure.numOfColumns )
-				{
-					return false;
-				}
+                $dzieuo.append(html);
+            },
+            // 6
+            setUpVerticalNav: function ($dzieuo) {
+                var containerId = "dzVerticalNav";
+                var prevArrowId = "dzUpArrow";
+                var nextArrowId = "dzDownArrow";
 
-				data.viewPort.nextItem.get$Column().show();
-				data.viewPort.prevItem.column = data.viewPort.currentItem.column;
-				data.viewPort.currentItem.column = data.viewPort.nextItem.column;
+                var html = "<nav id='" + containerId + "' href='#' '><a id ='" + prevArrowId + "'>up</a><a id='" + nextArrowId + " href='#' '>down</a></nav>"
+                $dzieuo.append(html);
+            },
+            // 7
+            setUpVerticalPaging: function ($dzieuo) {
 
-				data.viewPort.nextItem.get$Column().css( { "left": offset * ( data.viewPort.nextItem.column ), "top": 0 } );
+            },
+            // 8
+            setUpViewPortPositions: function (viewPort) {
+                var currentViewPortItem = viewPort.currentItem, nextViewPortItem = viewPort.nextItem;
+                var $currentViewPortElement = currentViewPortItem.get$Column(), $nextViewPortElement = nextViewPortItem.get$Column();
+                var leftOffset = $currentViewPortElement.width();
 
-				data.viewPort.isAnimationInProgressX = true;
+                $currentViewPortElement.show();
+                $currentViewPortElement.css({ "left": 0, "top": 0 });
+            },
+            // 9
+            setUpClickHandlers: function (data) {
+                data.structure.$dzieuo.on("click", "#dzNextArrow", function () {
+                    _plugin.animateColumns(data, $(window).width() - 20);
+                })
 
-				data.structure.$viewPort.animate( {
-					"left": ( data.structure.$viewPort.offset().left - offset )
-				}, 600, function ()
-				{
-					data.viewPort.prevItem.get$Column().hide();
-					data.viewPort.nextItem.column++;
+                data.structure.$dzieuo.on("click", "#dzPrevArrow", function () {
+                    _plugin.animateColumns(data, -($(window).width() - 20));
+                })
+            }
+        };
 
-					data.viewPort.isAnimationInProgressX = false;
-				} );
+        ///////////////////////////////////////////
+        //private plugin other methods
+        ///////////////////////////////////////////
 
-			}
-				// previous
-			else
-			{
-				if ( ( data.viewPort.currentItem.column === 0 ) )
-				{
-					return false;
-				}
+        _plugin.animateColumns = function (data, offset) {
+            if (data.viewPort.isAnimationInProgressX) {
+                return false;
+            }
 
-				data.viewPort.prevItem.get$Column().show();
-				data.viewPort.nextItem.column = data.viewPort.currentItem.column;
-				data.viewPort.currentItem.column = data.viewPort.prevItem.column;
+            // next
+            if (offset > 0) {
+                if ((data.viewPort.currentItem.column + 1) === data.structure.numOfColumns) {
+                    return false;
+                }
 
-				data.viewPort.prevItem.get$Column().css( { "left": ( -offset ) * ( data.viewPort.prevItem.column ), "top": 0 } );
+                data.viewPort.nextItem.get$Column().show();
+                data.viewPort.prevItem.column = data.viewPort.currentItem.column;
+                data.viewPort.currentItem.column = data.viewPort.nextItem.column;
 
-				data.viewPort.isAnimationInProgressX = true;
+                data.viewPort.nextItem.get$Column().css({ "left": offset * (data.viewPort.nextItem.column), "top": 0 });
 
-				data.structure.$viewPort.animate( {
-					"left": ( data.structure.$viewPort.offset().left - offset )
-				}, 600, function ()
-				{
-					data.viewPort.nextItem.get$Column().hide();
-					data.viewPort.prevItem.column--;
+                data.viewPort.isAnimationInProgressX = true;
 
-					data.viewPort.isAnimationInProgressX = false;
-				} );
-			}
-		}
-		_plugin.animateRows = function ( data, offset )
-		{
-			data.structure.$viewPort.animate( {
-				"top": offset
-			}, 600, function ()
-			{
-				//Animation complete			
-			} );
-		}
+                data.structure.$viewPort.animate({
+                    "left": (data.structure.$viewPort.offset().left - offset)
+                }, 600, function () {
+                    data.viewPort.prevItem.get$Column().hide();
+                    data.viewPort.nextItem.column++;
 
-		//////////////////////////////////////
-		// initialize plugin
-		//////////////////////////////////////
-		_plugin.setUpDataStructure( _data.structure );
-		_plugin.setUpViewPortItems( _data.viewPort, _data.structure.columns );
-		_plugin.setUpViewPort( _data.structure );
-		_plugin.setUpHorizontalNavArrows( _data.structure.$dzieuo );
-		_plugin.setUpVerticalNavArrows( _data.structure.$dzieuo );
-		_plugin.setUpViewPortPositions( _data.viewPort );
-		_plugin.setUpClickHandlers( _data );
+                    data.viewPort.isAnimationInProgressX = false;
+                });
 
-		//////////////////////////////////////
-		// public plugin api
-		//////////////////////////////////////
-		dzieuoApi = {
-			"isInTransition_X": function ()
-			{
-				return _data.isTransitioningX;
-			},
-			"isInTransition_Y": function ()
-			{
-				return _data.isTransitioningY;
-			}
-		};
+            }
+                // previous
+            else {
+                if ((data.viewPort.currentItem.column === 0)) {
+                    return false;
+                }
 
-		return dzieuoApi;
-	}
+                data.viewPort.prevItem.get$Column().show();
+                data.viewPort.nextItem.column = data.viewPort.currentItem.column;
+                data.viewPort.currentItem.column = data.viewPort.prevItem.column;
 
-	// jQuery plugin initialization
-	$.fn.dzieuo = function ( params )
-	{
-		return createDzieuo( this, params );
-	};
+                data.viewPort.prevItem.get$Column().css({ "left": (-offset) * (data.viewPort.prevItem.column), "top": 0 });
 
-} )( jQuery );
+                data.viewPort.isAnimationInProgressX = true;
+
+                data.structure.$viewPort.animate({
+                    "left": (data.structure.$viewPort.offset().left - offset)
+                }, 600, function () {
+                    data.viewPort.nextItem.get$Column().hide();
+                    data.viewPort.prevItem.column--;
+
+                    data.viewPort.isAnimationInProgressX = false;
+                });
+            }
+        }
+        _plugin.animateRows = function (data, offset) {
+            data.structure.$viewPort.animate({
+                "top": offset
+            }, 600, function () {
+                //Animation complete			
+            });
+        }
+
+        //////////////////////////////////////
+        // initialize plugin
+        //////////////////////////////////////
+        _plugin.setUpDataStructure(_data.structure);
+        _plugin.setUpViewPortItems(_data.viewPort, _data.structure.columns);
+        _plugin.setUpViewPort(_data.structure);
+        _plugin.setUpHorizontalNav(_data.structure.$dzieuo);
+        _plugin.setUpHorizontalPaging(_data.structure.$dzieuo, _data.structure.numOfColumns);
+        _plugin.setUpVerticalNav(_data.structure.$dzieuo);
+        _plugin.setUpVerticalPaging(_data.structure.$dzieuo);
+        _plugin.setUpViewPortPositions(_data.viewPort);
+        _plugin.setUpClickHandlers(_data);
+
+        //////////////////////////////////////
+        // public plugin api
+        //////////////////////////////////////
+        dzieuoApi = {
+            "isInTransition_X": function () {
+                return _data.isTransitioningX;
+            },
+            "isInTransition_Y": function () {
+                return _data.isTransitioningY;
+            }
+        };
+
+        return dzieuoApi;
+    }
+
+    // jQuery plugin initialization
+    $.fn.dzieuo = function (params) {
+        return createDzieuo(this, params);
+    };
+
+})(jQuery);

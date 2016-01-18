@@ -13,13 +13,15 @@
 
 .dz-column {
 	width: 100%;
-	background: pink;
 	position: absolute;
 	top: 0;
 	left: 0;
 }
 
 .dz-row {
+    height:400px;
+    margin-top:10px;
+    border-top:1px solid gray;
 }
 
 #dzViewPort {
@@ -29,8 +31,34 @@
 }
 
 #dzHorizontalNav {
-	position: absolute;
+	position: fixed;
 	top: 200px;
+    width:95%;
+}
+
+#dzHorizontalPaging{
+    position:fixed;
+    top:0px;
+    width:100%;
+    text-align:center;
+}
+
+#dzHorizontalPaging .dz-paging-item{
+    width:20px;
+    height:20px;
+    margin:4px;
+    border:1px solid gray;
+    display:inline-block;
+}
+
+#dzHorizontalNav #dzNextArrow{
+    position:absolute;
+    right:0;
+}
+
+#dzHorizontalNav #dzPrevArrow{
+    position:absolute;
+    left:0;
 }
 
 #dzVerticalNav {
