@@ -51,6 +51,15 @@
     display:inline-block;
 }
 
+#dzHorizontalPaging .dz-paging-item.current{
+    width:20px;
+    height:20px;
+    margin:4px;
+    border:1px solid gray;
+    display:inline-block;
+	background:pink;
+}
+
 #dzHorizontalNav #dzNextArrow{
     position:absolute;
     right:0;
