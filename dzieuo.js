@@ -385,7 +385,7 @@
 			oldScrollTop = $dzieuo.scrollTop();
 
 			viewPort.isAnimationInProgressY = true;
-			$dzieuo.animate( { scrollTop: $dzieuo.scrollTop() + $row.offset().top }, 600, function ()
+			$dzieuo.animate( { scrollTop: oldScrollTop + $row.offset().top }, 600, function ()
 			{
 				viewPort.isAnimationInProgressY = false;
 
@@ -394,7 +394,7 @@
 					viewPort.prevItem.row = viewPort.currentItem.row;
 					viewPort.currentItem.row = viewPort.nextItem.row;
 
-					if (( viewPort.currentItem.row + 1 ) !== data.structure.columns[viewPort.currentItem.column].numOfRows )
+					if (( viewPort.currentItem.row ) !== data.structure.columns[viewPort.currentItem.column].numOfRows - 1)
 					{
 						viewPort.nextItem.row++;
 					}
@@ -403,7 +403,7 @@
 				{
 					viewPort.nextItem.row = viewPort.currentItem.row;
 					viewPort.currentItem.row = viewPort.prevItem.row;
-					if ( ( viewPort.currentItem.row - 1 ) !== 0 )
+					if ( ( viewPort.currentItem.row ) !== 0 )
 					{
 						viewPort.prevItem.row--;
 					}
