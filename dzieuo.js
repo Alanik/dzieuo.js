@@ -240,12 +240,13 @@
 				var columnObj = data.structure.columns[targetColumnIndex]
 				var left = data.structure.$viewPort.offset().left;
 
+				data.structure.$viewPort.css("left", leftOffset * targetColumnIndex);
+
 				$row = columnObj.rows[columnObj.currentRow];
 
+				columnObj.$column.show();
 				data.structure.$dzieuo.scrollTop( 0 );
 				data.structure.$dzieuo.scrollTop( $row.offset().top );
-
-				columnObj.$column.show();
 
 				data.viewPort.prevItem.column = data.viewPort.currentItem.column;
 				data.viewPort.nextItem.column = targetColumnIndex; 			
@@ -256,6 +257,9 @@
 				columnObj.$column.css( { "left": leftOffset - left, "top": 0 } );
 
 				data.viewPort.isAnimationInProgressX = true;
+
+
+
 				data.structure.$viewPort.animate( {
 					"left": ( left - leftOffset )
 				}, 600, function ()
@@ -275,17 +279,16 @@
 
 			function moveToPrevious( data, targetColumnIndex )
 			{
-				var $row;
 				var columnObj= data.structure.columns[targetColumnIndex]
 				var left = data.structure.$viewPort.offset().left;
+				var row = $row = columnObj.rows[columnObj.currentRow];
 
-				$row = columnObj.rows[columnObj.currentRow];
-
-				data.structure.$dzieuo.scrollTop( 0 );
-				data.structure.$dzieuo.scrollTop( $row.offset().top );
+				data.structure.$viewPort.css("left", leftOffset * targetColumnIndex);
 
 				columnObj.$column.show();
-				
+				data.structure.$dzieuo.scrollTop( 0 );
+				data.structure.$dzieuo.scrollTop( $row.offset().top );
+			
 				data.viewPort.nextItem.column = data.viewPort.currentItem.column;
 				data.viewPort.prevItem.column = targetColumnIndex;
 				data.viewPort.currentItem.column = targetColumnIndex;
