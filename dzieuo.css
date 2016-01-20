@@ -19,7 +19,7 @@
 }
 
 .dz-row {
-    height:400px;
+	height: 400px;
 }
 
 #dzViewPort {
@@ -31,44 +31,49 @@
 #dzHorizontalNav {
 	position: fixed;
 	top: 200px;
-    width:95%;
+	width: 95%;
 }
 
-#dzHorizontalPaging{
-    position:fixed;
-    top:0px;
-    width:100%;
-    text-align:center;
+#dzHorizontalPaging {
+	position: fixed;
+	top: 0px;
+	width: 100%;
+	text-align: center;
 }
 
-#dzHorizontalPaging .dz-paging-item{
-    width:20px;
-    height:20px;
-    margin:4px;
-    border:1px solid gray;
-    display:inline-block;
+	#dzHorizontalPaging .dz-paging-item {
+		width: 20px;
+		height: 20px;
+		margin: 4px;
+		border: 1px solid gray;
+		display: inline-block;
+	}
+
+		#dzHorizontalPaging .dz-paging-item.current {
+			width: 20px;
+			height: 20px;
+			margin: 4px;
+			border: 1px solid gray;
+			display: inline-block;
+			background: pink;
+		}
+
+#dzHorizontalNav #dzNextArrow {
+	position: absolute;
+	right: 0;
 }
 
-#dzHorizontalPaging .dz-paging-item.current{
-    width:20px;
-    height:20px;
-    margin:4px;
-    border:1px solid gray;
-    display:inline-block;
-	background:pink;
-}
-
-#dzHorizontalNav #dzNextArrow{
-    position:absolute;
-    right:0;
-}
-
-#dzHorizontalNav #dzPrevArrow{
-    position:absolute;
-    left:0;
+#dzHorizontalNav #dzPrevArrow {
+	position: absolute;
+	left: 0;
 }
 
 #dzVerticalNav {
-	position: absolute;
+	position: fixed;
 	top: 300px;
+	right: 40px;
+}
+
+.dz-nav-arrows {
+	display: block;
 }
