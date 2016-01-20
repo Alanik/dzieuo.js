@@ -1,7 +1,10 @@
 ﻿( function ( $ )
 {
 	function createDzieuo( $dzieuo, params )
-	{
+	{ 
+		// issues TODO:
+		// 1. #viewPort adds up css left property value resulting in a very big negative css left value.
+		// Perhaps it can be optimized.
 		"use strict";
 
 		var dzieuoApi;
