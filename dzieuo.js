@@ -3,7 +3,7 @@
         "use strict";
 
         // issues TODO:
-        // 1. #viewPort adds up css left property value resulting in a very big negative css left value.
+        // 1. #viewPort adds up css left property value resulting in a very big negative or positive css left value.
         // Perhaps it can be optimized - Left property should be +- screen width value.
 
         var dzieuoApi;
@@ -34,6 +34,9 @@
                 $horizontalPaging: null,
                 $prevHorizontalArrow: null,
                 $nextHorizontalArrow: null,
+                $verticalPaging: null,
+                $downVerticalArrow: null,
+                $upVerticalArrow: null,
                 columns: [ //{ $column : $(column), rows : [ $(row) , $(row) ], numOfRows = rows.length, currentRow = 0 }
                 ],
                 numOfColumns: 0
@@ -128,14 +131,17 @@
                 structure.$horizontalPaging = $paging;
             },
             // 6
-            setUpVerticalNav: function ($dzieuo) {
+            setUpVerticalNav: function (structure) {
                 var containerId = "dzVerticalNav";
                 var className = "dz-nav-arrows"
                 var prevArrowId = "dzUpArrow";
                 var nextArrowId = "dzDownArrow";
 
-                var html = "<nav id='" + containerId + "'><a id ='" + prevArrowId + "' class='" + className + "' href='#'>up</a><a id='" + nextArrowId + "' class='" + className + "' href='#'>down</a></nav>"
-                $dzieuo.append(html);
+                var $html = $("<nav id='" + containerId + "'><a id ='" + prevArrowId + "' class='" + className + "' href='#'>up</a><a id='" + nextArrowId + "' class='" + className + "' href='#'>down</a></nav>");
+                structure.$dzieuo.append($html);
+
+                structure.$upVerticalArrow = $html.find("#" + prevArrowId);
+                structure.$downVerticalArrow = $html.find("#" + nextArrowId);
             },
             // 7
             setUpVerticalPaging: function (data) {
@@ -214,7 +220,7 @@
         };
 
         ///////////////////////////////////////////
-        //private plugin other methods
+        //private other plugin  methods
         ///////////////////////////////////////////
         _plugin.beginHorizontalTransition = function (data, leftOffset, targetColumn) {
             var columnObj, $row, topOffset;
@@ -328,13 +334,14 @@
             }
 
             function toggleHorizontalArrowVisibility(targetIndex, currentIndex, structure) {
+                var lastColumnIndex = data.structure.numOfColumns - 1;
                 if (targetIndex === 0) {
                     data.structure.$prevHorizontalArrow.fadeOut();
 
-                    if (currentIndex + 1 === structure.numOfColumns) {
+                    if (currentIndex === lastColumnIndex) {
                         data.structure.$nextHorizontalArrow.fadeIn();
                     }
-                } else if (targetIndex === data.structure.numOfColumns - 1) {
+                } else if (targetIndex === lastColumnIndex) {
                     data.structure.$nextHorizontalArrow.fadeOut();
 
                     if (currentIndex === 0) {
@@ -346,7 +353,7 @@
                         data.structure.$prevHorizontalArrow.fadeIn();
                     }
 
-                    if (currentIndex === data.structure.numOfColumns - 1) {
+                    if (currentIndex === lastColumnIndex) {
                         data.structure.$nextHorizontalArrow.fadeIn();
                     }
                 }
@@ -368,11 +375,9 @@
                 }
             }
 
+            toggleVerticalArrowVisibility(data.viewPort.currentItem.row, targetRowIndex, data);
             _plugin.updateVerticalPaging(data.structure.$verticalPaging, targetRowIndex);
             oldScrollTop = $dzieuo.scrollTop();
-
-            console.log("viewPort.currentItem.column: " + viewPort.currentItem.column);
-            console.log("targetRowIndex: " + targetRowIndex);
 
             viewPort.isAnimationInProgressY = true;
             $dzieuo.animate({ scrollTop: oldScrollTop + data.structure.columns[viewPort.currentItem.column].rows[targetRowIndex].offset().top }, 600, function () {
@@ -398,14 +403,31 @@
                 data.structure.columns[viewPort.currentItem.column].currentRow = viewPort.currentItem.row;
 
             });
+
+            function toggleVerticalArrowVisibility(currentIndex, targetIndex, data) {
+                var lastRowIndex = data.structure.columns[data.viewPort.currentItem.column].numOfRows - 1;
+                if (targetIndex === 0) {
+                    data.structure.$upVerticalArrow.fadeOut();
+                } else if (targetIndex === lastRowIndex) {
+                    data.structure.$downVerticalArrow.fadeOut();
+                }
+
+                if (currentIndex === 0) {
+                    data.structure.$upVerticalArrow.fadeIn();
+                }
+
+                if (currentIndex === lastRowIndex) {
+                    data.structure.$downVerticalArrow.fadeIn();
+                }
+            }
         }
 
-        _plugin.updateVerticalPaging = function($paging, targetRowIndex) {
-                var $item = $paging.find(".dz-vertical-paging-item.current");
-                $item.removeClass("current");
-                var $nextItem = $paging.find('[data-row="' + targetRowIndex + '"]');
-                $nextItem.addClass("current");
-            }
+        _plugin.updateVerticalPaging = function ($paging, targetRowIndex) {
+            var $item = $paging.find(".dz-vertical-paging-item.current");
+            $item.removeClass("current");
+            var $nextItem = $paging.find('[data-row="' + targetRowIndex + '"]');
+            $nextItem.addClass("current");
+        }
 
         //////////////////////////////////////
         // initialize plugin
@@ -415,7 +437,7 @@
         _plugin.setUpViewPort(_data.structure);
         _plugin.setUpHorizontalNav(_data.structure);
         _plugin.setUpHorizontalPaging(_data.structure);
-        _plugin.setUpVerticalNav(_data.structure.$dzieuo);
+        _plugin.setUpVerticalNav(_data.structure);
         _plugin.setUpVerticalPaging(_data);
         _plugin.setUpViewPortPositions(_data.viewPort);
         _plugin.setUpClickHandlers(_data);
