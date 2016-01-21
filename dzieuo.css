@@ -1,79 +1,109 @@
 ﻿html, body {
-	padding: 0;
-	margin: 0;
-	height: 100%;
+    padding: 0;
+    margin: 0;
+    height: 100%;
 }
 
 #dzieuo {
-	position: relative;
-	overflow-x: hidden;
-	overflow-y: visible;
-	height: 100%;
+    position: relative;
+    overflow-x: hidden;
+    overflow-y: visible;
+    height: 100%;
 }
 
 .dz-column {
-	width: 100%;
-	position: absolute;
-	top: 0;
-	left: 0;
+    width: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    color:red;
 }
 
 .dz-row {
-	height: 400px;
+    height: 400px;
 }
 
 #dzViewPort {
-	top: 0;
-	left: 0;
-	position: relative;
+    top: 0;
+    left: 0;
+    position: relative;
 }
 
 #dzHorizontalNav {
-	position: fixed;
-	top: 200px;
-	width: 95%;
+    position: fixed;
+    top: 200px;
+    width: 95%;
 }
 
 #dzHorizontalPaging {
-	position: fixed;
-	top: 0px;
-	width: 100%;
-	text-align: center;
+    position: fixed;
+    top: 0px;
+    width: 100%;
+    text-align: center;
 }
 
-	#dzHorizontalPaging .dz-paging-item {
-		width: 20px;
-		height: 20px;
-		margin: 4px;
-		border: 1px solid gray;
-		display: inline-block;
-	}
+    #dzHorizontalPaging .dz-horizontal-paging-item {
+        width: 20px;
+        height: 20px;
+        margin: 4px;
+        border: 1px solid gray;
+        display: inline-block;
+    }
 
-		#dzHorizontalPaging .dz-paging-item.current {
-			width: 20px;
-			height: 20px;
-			margin: 4px;
-			border: 1px solid gray;
-			display: inline-block;
-			background: pink;
-		}
+        #dzHorizontalPaging .dz-horizontal-paging-item.current {
+            width: 20px;
+            height: 20px;
+            margin: 4px;
+            border: 1px solid gray;
+            display: inline-block;
+            background: pink;
+        }
+
+#dzVerticalPaging {
+    position: fixed;
+    right: 130px;
+    background: white;
+    top: 200px;
+}
+
+    #dzVerticalPaging .dz-vertical-paging-item {
+        width: 20px;
+        height: 20px;
+        margin: 4px;
+        border: 1px solid gray;
+        display: block;
+    }
+
+        #dzVerticalPaging .dz-vertical-paging-item.current {
+            width: 20px;
+            height: 20px;
+            margin: 4px;
+            border: 1px solid gray;
+            display: block;
+            background: pink;
+        }
+
+
 
 #dzHorizontalNav #dzNextArrow {
-	position: absolute;
-	right: 0;
+    position: absolute;
+    right: 0;
+    background: white;
 }
 
 #dzHorizontalNav #dzPrevArrow {
-	position: absolute;
-	left: 0;
+    position: absolute;
+    left: 0;
+    background: white;
 }
 
 #dzVerticalNav {
-	position: fixed;
-	top: 300px;
-	right: 40px;
+    position: fixed;
+    top: 300px;
+    right: 200px;
+    background: white;
 }
 
 .dz-nav-arrows {
-	display: block;
+    display: block;
 }
