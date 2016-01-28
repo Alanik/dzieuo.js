@@ -46,17 +46,18 @@
         width: 20px;
         height: 20px;
         margin: 4px;
-        border: 1px solid gray;
+        border: 2px solid #DEDEDE;
         display: inline-block;
+        border-radius:20px;
     }
 
         #dzHorizontalPaging .dz-horizontal-paging-item.current {
             width: 20px;
             height: 20px;
             margin: 4px;
-            border: 1px solid gray;
+            border: 2px solid #ADA8A8;
             display: inline-block;
-            background: pink;
+            background: #FFFED2;
         }
 
 #dzVerticalPaging {
@@ -70,17 +71,18 @@
         width: 20px;
         height: 20px;
         margin: 4px;
-        border: 1px solid gray;
+        border: 2px solid #DEDEDE;
         display: block;
+        border-radius:20px;
     }
 
         #dzVerticalPaging .dz-vertical-paging-item.current {
             width: 20px;
             height: 20px;
             margin: 4px;
-            border: 1px solid gray;
             display: block;
-            background: pink;
+            background: #FFFED2;
+            border: 2px solid #ADA8A8;
         }
 
 
@@ -102,6 +104,7 @@
     top: 300px;
     right: 200px;
     background: white;
+    text-align: center;
 }
 
 .dz-nav-arrows {

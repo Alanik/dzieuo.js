@@ -1,5 +1,5 @@
 ﻿(function ($) {
-    function createDzieuo($dzieuo, params) {
+    function createDzieuo($dzieuo, opts) {
         "use strict";
 
         // issues TODO:
@@ -7,6 +7,16 @@
         // Perhaps it can be optimized - Left property should be +- screen width value.
 
         var dzieuoApi;
+
+        //default options
+        var options = {
+            prevArrowContent: "previous",
+            nextArrowContent: "next",
+            upArrowContent: "up",
+            downArrowContent: "down"
+        }
+
+        $.extend(options, opts);
 
         /////////////////////////////////////////
         //private objects
@@ -104,12 +114,19 @@
                 var prevArrowId = "dzPrevArrow";
                 var nextArrowId = "dzNextArrow";
 
-                var html = "<nav id='" + containerId + "'><a id ='" + prevArrowId + "' href='#' style='display:none;'>prev</a><a id='" + nextArrowId + "' href='#'>next</a></nav>"
-                var $html = $(html);
-                structure.$dzieuo.append($html);
+                var $nav = $("<nav id='" + containerId + "'></nav>");
+                var $prevArrow = $("<a id ='" + prevArrowId + "' href='#' style='display:none;'></a>");
+                var $nextArrow = $("<a id='" + nextArrowId + "' href='#'></a>");
 
-                structure.$prevHorizontalArrow = $html.find("#" + prevArrowId);
-                structure.$nextHorizontalArrow = $html.find("#" + nextArrowId);
+                $prevArrow.html(options.prevArrowContent);
+                $nextArrow.html(options.nextArrowContent);
+                $nav.append($prevArrow);
+                $nav.append($nextArrow);
+
+                structure.$dzieuo.append($nav);
+
+                structure.$prevHorizontalArrow = $prevArrow;
+                structure.$nextHorizontalArrow = $nextArrow;
             },
             // 5
             setUpHorizontalPaging: function (structure) {
@@ -199,7 +216,7 @@
                 data.structure.$dzieuo.on("click", ".dz-horizontal-paging-item", function () {
                     var targetColumn = $(this).data("column");
 
-                    if (!data.viewPort.isAnimationInProgressX || data.viewPort.currentItem.column !== targetColumn) {
+                    if (!data.viewPort.isAnimationInProgressX && data.viewPort.currentItem.column !== targetColumn) {
                         if (data.viewPort.currentItem.column < targetColumn) {
                             _plugin.beginHorizontalTransition(data, ($(window).width() - 20), targetColumn);
                         }
@@ -212,7 +229,7 @@
                 data.structure.$dzieuo.on("click", ".dz-vertical-paging-item", function () {
                     var targetRow = $(this).data("row");
 
-                    if (!data.viewPort.isAnimationInProgressY || data.viewPort.currentItem.row !== targetRow) {
+                    if (!data.viewPort.isAnimationInProgressY && data.viewPort.currentItem.row !== targetRow) {
                         _plugin.beginVerticalTransition(data, targetRow);
                     }
                 })
@@ -454,12 +471,7 @@
         // public plugin api
         //////////////////////////////////////
         dzieuoApi = {
-            "isInTransition_X": function () {
-                return _data.isTransitioningX;
-            },
-            "isInTransition_Y": function () {
-                return _data.isTransitioningY;
-            }
+
         };
 
         return dzieuoApi;
