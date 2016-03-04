@@ -35,6 +35,7 @@
 
 			this.get$Row = function ()
 			{
+				console.log(this.row);
 				return data.structure.columns[data.viewPort.currentItem.column].rows[this.row];
 			}
 		}
@@ -69,6 +70,7 @@
 		//private plugin initialization methods
 		///////////////////////////////////////////
 		var _plugin = {
+
 			// call order:
 			// 1
 			setUpDataStructure: function ( structure )
@@ -113,7 +115,7 @@
 				var $viewPortContainer = $( '<div id="' + viewPortContainerId + '"></div>' );
 				var columnInnerWrapperClass = 'dz-column-inner-wrapper';
 				var $columns = structure.$dzieuo.children();
-				
+
 				// set up inner wrapper per column
 				$columns.each( function ( index, element )
 				{
@@ -121,7 +123,7 @@
 					$rows = $column.children();
 					$columnInnerWrapper = $( '<div class="' + columnInnerWrapperClass + '"></div>' );
 					$rows.detach().appendTo( $columnInnerWrapper );
-					$columnInnerWrapper.appendTo($column);
+					$columnInnerWrapper.appendTo( $column );
 				} )
 
 				$columns.hide();
@@ -277,6 +279,52 @@
 						_plugin.beginVerticalTransition( data, targetRow );
 					}
 				} )
+			},
+			// 10
+			updateVerticalPagingOnWindowScroll: function ( data )
+			{
+				var $window = $(window), winHeightHalf, $nextRow;
+				var viewPort = data.viewPort;
+				var structure = data.structure;
+				var currentColumn = viewPort.currentItem.column;
+
+				function throttle( fn, delay )
+				{
+					delay || ( delay = 100 );
+					var last = +new Date;
+					return function ()
+					{
+						var now = +new Date;
+						if ( now - last > delay )
+						{
+							fn.apply( this, arguments );
+							last = now;
+						}
+					};
+				};
+
+				$( ".dz-column" ).scroll( throttle( function ()
+				{
+					winHeightHalf = $window.height() / 2;
+					$nextRow = viewPort.nextItem.get$Row();
+
+					if ( $nextRow.offset().top <= winHeightHalf )
+					{				
+						viewPort.prevItem.row = viewPort.currentItem.row;
+						viewPort.currentItem.row = viewPort.nextItem.row;
+
+						if (structure.columns[currentColumn].numOfRows > viewPort.nextItem.row )
+						{
+							viewPort.nextItem.row = viewPort.currentItem.row + 1;
+							console.log( "next row: " + viewPort.nextItem.row );
+						}
+
+						structure.columns[currentColumn].currentRow = viewPort.currentItem.row;
+
+						_plugin.updateVerticalPaging( structure.$verticalPaging, data.structure.columns[viewPort.currentItem.column].currentRow );
+					}
+
+				}, 250 ) );
 			}
 		};
 
@@ -342,7 +390,7 @@
 				data.viewPort.isAnimationInProgressX = true;
 				data.structure.$viewPort.animate( {
 					"left": ( left - leftOffset )
-				}, 600, function ()
+				}, 800, function ()
 				{
 
 					data.viewPort.prevItem.get$Column().hide();
@@ -562,6 +610,7 @@
 		_plugin.setUpVerticalPaging( _data );
 		_plugin.setUpViewPortPositions( _data.viewPort );
 		_plugin.setUpClickHandlers( _data );
+		_plugin.updateVerticalPagingOnWindowScroll( _data );
 
 		//////////////////////////////////////
 		// public plugin api

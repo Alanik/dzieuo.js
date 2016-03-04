@@ -41,7 +41,8 @@
 #dzHorizontalPaging {
     position: fixed;
     top: 0px;
-    width: 100%;
+	left:10%;
+    width: 80%;
     text-align: center;
 }
 
