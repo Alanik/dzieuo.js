@@ -270,7 +270,8 @@
           };
         };
 
-        $(".dz-column").scroll(throttle(function () {
+        $( ".dz-column" ).scroll( throttle( function ()
+        {
           var st, currentColumn = viewPort.currentItem.column;
 
           if (scroll.shouldCalculateScroll) {
@@ -291,7 +292,8 @@
                 }
 
                 structure.columns[currentColumn].currentRow = viewPort.currentItem.row;
-                _plugin.updateVerticalPaging(structure.$verticalPaging, viewPort.currentItem.row);
+                _plugin.updateVerticalPaging( structure.$verticalPaging, viewPort.currentItem.row );
+                _plugin.toggleVerticalArrowVisibility( viewPort.prevItem.row, viewPort.currentItem.row, viewPort.currentItem.column, data);
 
               }
             }
@@ -308,14 +310,15 @@
                 }
 
                 structure.columns[currentColumn].currentRow = viewPort.currentItem.row;
-                _plugin.updateVerticalPaging(structure.$verticalPaging, viewPort.currentItem.row);
-
+                _plugin.updateVerticalPaging( structure.$verticalPaging, viewPort.currentItem.row );
+                _plugin.toggleVerticalArrowVisibility( viewPort.nextItem.row, viewPort.currentItem.row, viewPort.currentItem.column, data );
               }
             }
 
             scroll.lastScrollTop = st;
           }
-        }, 100));
+
+        }, 50));
       }
     };
 
@@ -525,7 +528,8 @@
       $nextItem.addClass("current");
     }
 
-    _plugin.toggleVerticalArrowVisibility = function (currentRowIndex, targetRowIndex, targetColumnIndex, data) {
+    _plugin.toggleVerticalArrowVisibility = function ( currentRowIndex, targetRowIndex, targetColumnIndex, data )
+    {
       var lastRowIndex = data.structure.columns[targetColumnIndex].numOfRows - 1;
 
       // when horizontal trasition takes place
