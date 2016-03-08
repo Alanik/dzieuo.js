@@ -28,7 +28,7 @@
     $.extend(OPTIONS, opts);
 
     /////////////////////////////////////////
-    //private objects
+    //private object definitions
     /////////////////////////////////////////
     var ViewPortItem = function (data, column, row) {
       this.column = column;
@@ -43,6 +43,37 @@
       }
     }
 
+    var urlRouter = function (data, beginHorizontalTransitionFn) {
+      var self = this;
+      self.hash = 0;
+
+      self.initialize = function () {
+        window.location.hash = self.hash;
+
+        $(window).on('hashchange', function () {
+
+          // TODO: finish this
+
+          //var hash = parseInt(window.location.hash.substr(1));
+
+          //if (hash >= 0 && hash < data.structure.numOfColumns) {
+          //  if (self.hash < hash) {
+          //    self.hash = hash;
+          //    //beginHorizontalTransitionFn(data, $(window).width() - 20, self.hash)
+          //  } else if (self.hash < hash) {
+          //    self.hash = hash;
+          //    //beginHorizontalTransitionFn(data, -($(window).width() - 20), self.hash)
+          //  }
+          //} else {
+          //  self.hash = 0;
+          //  window.location.hash = self.hash;
+          //}
+        })
+      }
+
+
+
+    }
     ///////////////////////////////////////////
     //private plugin state
     ///////////////////////////////////////////
@@ -163,11 +194,11 @@
         var containerId = "dzHorizontalPaging";
         var pageItemClass = "dz-horizontal-paging-item";
 
-        var html = "<nav id='" + containerId + "'><a class='" + pageItemClass + " current' href='#' data-column='0'>";
+        var html = "<nav id='" + containerId + "'><a class='" + pageItemClass + " current' href='#0' data-column='0'>";
 
 
         for (var i = 1; i < structure.numOfColumns; i++) {
-          html += "<a class='" + pageItemClass + "' href='#' data-column='" + i + "'>";
+          html += "<a class='" + pageItemClass + "' href='#" + i + "' data-column='" + i + "'>";
         }
 
         html += "</nav>";
@@ -208,10 +239,10 @@
         var containerId = "dzVerticalPaging";
         var pageItemClass = "dz-vertical-paging-item";
 
-        var html = "<nav id='" + containerId + "'><a class='" + pageItemClass + " current' href='#' data-row='0'>";
+        var html = "<nav id='" + containerId + "'><a class='" + pageItemClass + " current' href='#" + data.viewPort.currentItem.column + "' data-row='0'>";
 
         for (var i = 1; i < data.structure.columns[data.viewPort.currentItem.column].numOfRows; i++) {
-          html += "<a class='" + pageItemClass + "' href='#' data-row='" + i + "'>";
+          html += "<a class='" + pageItemClass + "' href='#" + data.viewPort.currentItem.column + "' data-row='" + i + "'>";
         }
 
         html += "</nav>";
@@ -238,12 +269,14 @@
       setUpClickHandlers: function (data) {
         data.structure.$dzieuo.on("click", "#dzNextArrow", function () {
           if (!data.viewPort.isAnimationInProgressX) {
+            data.structure.$nextHorizontalArrow.attr('href', "#" + data.viewPort.nextItem.column);
             _plugin.beginHorizontalTransition(data, $(window).width() - 20, data.viewPort.nextItem.column);
           }
         })
 
         data.structure.$dzieuo.on("click", "#dzPrevArrow", function () {
           if (!data.viewPort.isAnimationInProgressX) {
+            data.structure.$prevHorizontalArrow.attr('href', "#" + data.viewPort.prevItem.column);
             _plugin.beginHorizontalTransition(data, -($(window).width() - 20), data.viewPort.prevItem.column);
           }
         })
@@ -251,6 +284,7 @@
         data.structure.$dzieuo.on("click", "#dzDownArrow", function () {
           if (!data.viewPort.isAnimationInProgressY) {
             data.scroll.shouldCalculateScroll = false;
+            data.structure.$downVerticalArrow.attr('href', "#" + data.viewPort.currentItem.column);
             _plugin.beginVerticalTransition(data, data.viewPort.currentItem.row + 1);
           }
         })
@@ -258,6 +292,8 @@
         data.structure.$dzieuo.on("click", "#dzUpArrow", function () {
           if (!data.viewPort.isAnimationInProgressY) {
             data.scroll.shouldCalculateScroll = false;
+
+            data.structure.$upVerticalArrow.attr('href', "#" + data.viewPort.currentItem.column);
             _plugin.beginVerticalTransition(data, data.viewPort.currentItem.row - 1);
           }
         })
@@ -349,7 +385,7 @@
           }
 
         }, OPTIONS.scroll_calculation_interval));
-      }
+      },
     };
 
     ///////////////////////////////////////////
@@ -473,10 +509,10 @@
 
       function reCreateVerticalPaging(data, column) {
         var verticalPagingItemClass = "dz-vertical-paging-item";
-        var html = "<a class='" + verticalPagingItemClass + "' href='#' data-row='0'>";
+        var html = "<a class='" + verticalPagingItemClass + "' href='#" + column + "' data-row='0'>";
 
         for (var i = 1; i < data.structure.columns[column].numOfRows; i++) {
-          html += "<a class='" + verticalPagingItemClass + "' href='#' data-row='" + i + "'>";
+          html += "<a class='" + verticalPagingItemClass + "' href='#" + column + "' data-row='" + i + "'>";
         }
 
         data.structure.$verticalPaging.empty();
@@ -602,6 +638,10 @@
       return $(window).height() / 2;
     }
 
+    ///////////////////////////////////////////
+    //initialize helper objects
+    ///////////////////////////////////////////
+    _plugin.URL_ROUTER = new urlRouter(_data, _plugin.beginHorizontalTransition);
 
     //////////////////////////////////////
     // initialize plugin
@@ -616,6 +656,8 @@
     _plugin.setUpViewPortPositions(_data.viewPort);
     _plugin.setUpClickHandlers(_data);
     _plugin.updateVerticalPagingOnWindowScroll(_data);
+
+    _plugin.URL_ROUTER.initialize();
 
     //////////////////////////////////////
     // public plugin api
