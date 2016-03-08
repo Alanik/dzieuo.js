@@ -1,116 +1,129 @@
 ﻿html, body {
-    padding: 0;
-    margin: 0;
-    height: 100%;
+  padding: 0;
+  margin: 0;
+  height: 100%;
 }
 
 #dzieuo {
-    position: relative;
-    overflow-x: hidden;
-    overflow-y: hidden;
-    height: 100%;
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: hidden;
+  height: 100%;
 }
 
 .dz-column {
-    width: 100%;
-    height:100%;
-    overflow-y:scroll;
-    position: absolute;
-    top: 0;
-    left: 0;
-    color:red;
+  width: 100%;
+  height: 100%;
+  overflow-y: scroll;
+  position: absolute;
+  top: 0;
+  left: 0;
+  color: red;
 }
 
 .dz-row {
-    height: 400px;
+  height: 400px;
 }
 
 #dzViewPort {
-    top: 0;
-    left: 0;
-    position: relative;
-    height:100%;
+  top: 0;
+  left: 0;
+  position: relative;
+  height: 100%;
 }
 
 #dzHorizontalNav {
-    position: fixed;
-    top: 200px;
-    width: 95%;
+  position: fixed;
+  width: 100%;
+  top: 0px;
 }
 
 #dzHorizontalPaging {
-    position: fixed;
-    top: 0px;
-	left:10%;
-    width: 80%;
-    text-align: center;
+  position: fixed;
+  top: 0px;
+  left: 10%;
+  width: 80%;
+  text-align: center;
 }
 
-    #dzHorizontalPaging .dz-horizontal-paging-item {
-        width: 20px;
-        height: 20px;
-        margin: 4px;
-        border: 2px solid #DEDEDE;
-        display: inline-block;
-        border-radius:20px;
-    }
+  #dzHorizontalPaging .dz-horizontal-paging-item {
+    width: 20px;
+    height: 20px;
+    margin: 4px;
+    border: 2px solid #DEDEDE;
+    display: inline-block;
+    border-radius: 20px;
+  }
 
-        #dzHorizontalPaging .dz-horizontal-paging-item.current {
-            width: 20px;
-            height: 20px;
-            margin: 4px;
-            border: 2px solid #ADA8A8;
-            display: inline-block;
-            background: #FFFED2;
-        }
+    #dzHorizontalPaging .dz-horizontal-paging-item.current {
+      width: 20px;
+      height: 20px;
+      margin: 4px;
+      border: 2px solid #ADA8A8;
+      display: inline-block;
+      background: #FFFED2;
+    }
 
 #dzVerticalPaging {
-    position: fixed;
-    right: 130px;
-    background: white;
-    top: 200px;
+  position: fixed;
+  right: 130px;
+  background: white;
+  top: 200px;
 }
 
-    #dzVerticalPaging .dz-vertical-paging-item {
-        width: 20px;
-        height: 20px;
-        margin: 4px;
-        border: 2px solid #DEDEDE;
-        display: block;
-        border-radius:20px;
+  #dzVerticalPaging .dz-vertical-paging-item {
+    width: 20px;
+    height: 20px;
+    margin: 4px;
+    border: 2px solid #DEDEDE;
+    display: block;
+    border-radius: 20px;
+  }
+
+    #dzVerticalPaging .dz-vertical-paging-item.current {
+      width: 20px;
+      height: 20px;
+      margin: 4px;
+      display: block;
+      background: #FFFED2;
+      border: 2px solid #ADA8A8;
     }
 
-        #dzVerticalPaging .dz-vertical-paging-item.current {
-            width: 20px;
-            height: 20px;
-            margin: 4px;
-            display: block;
-            background: #FFFED2;
-            border: 2px solid #ADA8A8;
-        }
-
-
-
 #dzHorizontalNav #dzNextArrow {
-    position: absolute;
-    right: 0;
-    background: white;
+  position: absolute;
+  right: 50px;
 }
 
 #dzHorizontalNav #dzPrevArrow {
-    position: absolute;
-    left: 0;
-    background: white;
+  position: absolute;
+  left: 40px;
 }
 
 #dzVerticalNav {
-    position: fixed;
-    top: 300px;
-    right: 200px;
-    background: white;
-    text-align: center;
+  position: fixed;
+  top: 300px;
+  right: 240px;
+  height: 100px;
+  background: white;
+  text-align: center;
 }
 
+  #dzVerticalNav #dzUpArrow {
+    top: 0px;
+    position: absolute;
+  }
+
+
+  #dzVerticalNav #dzDownArrow {
+    bottom: 0px;
+    position: absolute;
+  }
+
+
 .dz-nav-arrows {
-    display: block;
+  display: block;
 }
+
+
+
+/*Demo css*/

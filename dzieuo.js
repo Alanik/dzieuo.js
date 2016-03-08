@@ -9,14 +9,23 @@
     var dzieuoApi;
 
     //default options
-    var options = {
-      prevArrowContent: "previous",
-      nextArrowContent: "next",
-      upArrowContent: "up",
-      downArrowContent: "down"
+    var OPTIONS = {
+      prev_arrow_content: '<img src="Images/arrow-left.png" alt="left navigation arrow">',
+      next_arrow_content: '<img src="Images/arrow-right.png" alt="right navigation arrow">',
+      up_arrow_content: '<img src="Images/arrow-up.png" alt="up navigation arrow">',
+      down_arrow_content: '<img src="Images/arrow-down.png" alt="down navigation arrow">',
+      initialize_horizontal_arrows_position: true,
+      initialize_vertical_arrows_position: true,
+      initialize_vertical_paging_position: true,
+      horizontal_arrow_height: 92,
+      scroll_calculation_interval: 50,
+      horizontal_animation_easing: 'slide',
+      horizontal_animation_speed: 800,
+      vertical_animation_easing: 'slide',
+      vertical_animation_speed: 800
     }
 
-    $.extend(options, opts);
+    $.extend(OPTIONS, opts);
 
     /////////////////////////////////////////
     //private objects
@@ -134,8 +143,8 @@
         var $prevArrow = $("<a id ='" + prevArrowId + "' href='#' style='display:none;'></a>");
         var $nextArrow = $("<a id='" + nextArrowId + "' href='#'></a>");
 
-        $prevArrow.html(options.prevArrowContent);
-        $nextArrow.html(options.nextArrowContent);
+        $prevArrow.html(OPTIONS.prev_arrow_content);
+        $nextArrow.html(OPTIONS.next_arrow_content);
         $nav.append($prevArrow);
         $nav.append($nextArrow);
 
@@ -143,6 +152,11 @@
 
         structure.$prevHorizontalArrow = $prevArrow;
         structure.$nextHorizontalArrow = $nextArrow;
+
+        if (OPTIONS.initialize_horizontal_arrows_position) {
+          $prevArrow.css('top', _plugin.getHalfWindowHeight() - OPTIONS.horizontal_arrow_height / 2);
+          $nextArrow.css('top', _plugin.getHalfWindowHeight() - OPTIONS.horizontal_arrow_height / 2);
+        }
       },
       // 5
       setUpHorizontalPaging: function (structure) {
@@ -170,11 +184,24 @@
         var prevArrowId = "dzUpArrow";
         var nextArrowId = "dzDownArrow";
 
-        var $html = $("<nav id='" + containerId + "'><a id ='" + prevArrowId + "' class='" + className + "' href='#' style='display:none;'>up</a><a id='" + nextArrowId + "' class='" + className + "' href='#'>down</a></nav>");
-        structure.$dzieuo.append($html);
+        var $nav = $("<nav id='" + containerId + "'></nav>");
+        var $prevArrow = $("<a id='" + prevArrowId + "' class='" + className + "' href='#' style='display:none;'></a>");
+        var $nextArrow = $("<a id='" + nextArrowId + "' class='" + className + "' href='#'></a>");
 
-        structure.$upVerticalArrow = $html.find("#" + prevArrowId);
-        structure.$downVerticalArrow = $html.find("#" + nextArrowId);
+        $prevArrow.html(OPTIONS.up_arrow_content);
+        $nextArrow.html(OPTIONS.down_arrow_content);
+        $nav.append($prevArrow);
+        $nav.append($nextArrow);
+
+        structure.$dzieuo.append($nav);
+
+        structure.$upVerticalArrow = $nav.find("#" + prevArrowId);
+        structure.$downVerticalArrow = $nav.find("#" + nextArrowId);
+
+        if (OPTIONS.initialize_vertical_arrows_position) {
+          $nav.css('top', _plugin.getHalfWindowHeight() - ($nav.height() / 2));
+        }
+
       },
       // 7
       setUpVerticalPaging: function (data) {
@@ -193,6 +220,10 @@
         data.structure.$dzieuo.append($paging);
 
         data.structure.$verticalPaging = $paging;
+
+        if (OPTIONS.initialize_vertical_paging_position) {
+          $paging.css('top', _plugin.getHalfWindowHeight() - ($paging.height() / 2));
+        }
       },
       // 8
       setUpViewPortPositions: function (viewPort) {
@@ -255,7 +286,7 @@
       },
       // 10
       updateVerticalPagingOnWindowScroll: function (data) {
-        var $window = $(window), currentColumn, winHeightHalf, $nextRow, $currentRow;
+        var currentColumn, winHeightHalf, $nextRow, $currentRow;
         var viewPort = data.viewPort, structure = data.structure, scroll = data.scroll;
 
         function throttle(fn, delay) {
@@ -270,13 +301,12 @@
           };
         };
 
-        $( ".dz-column" ).scroll( throttle( function ()
-        {
+        $(".dz-column").scroll(throttle(function () {
           var st, currentColumn = viewPort.currentItem.column;
 
           if (scroll.shouldCalculateScroll) {
 
-            winHeightHalf = $window.height() / 2;
+            winHeightHalf = _plugin.getHalfWindowHeight();
             st = $(this).scrollTop();
 
             // scroll down
@@ -292,8 +322,8 @@
                 }
 
                 structure.columns[currentColumn].currentRow = viewPort.currentItem.row;
-                _plugin.updateVerticalPaging( structure.$verticalPaging, viewPort.currentItem.row );
-                _plugin.toggleVerticalArrowVisibility( viewPort.prevItem.row, viewPort.currentItem.row, viewPort.currentItem.column, data);
+                _plugin.updateVerticalPaging(structure.$verticalPaging, viewPort.currentItem.row);
+                _plugin.toggleVerticalArrowVisibility(viewPort.prevItem.row, viewPort.currentItem.row, viewPort.currentItem.column, data);
 
               }
             }
@@ -310,15 +340,15 @@
                 }
 
                 structure.columns[currentColumn].currentRow = viewPort.currentItem.row;
-                _plugin.updateVerticalPaging( structure.$verticalPaging, viewPort.currentItem.row );
-                _plugin.toggleVerticalArrowVisibility( viewPort.nextItem.row, viewPort.currentItem.row, viewPort.currentItem.column, data );
+                _plugin.updateVerticalPaging(structure.$verticalPaging, viewPort.currentItem.row);
+                _plugin.toggleVerticalArrowVisibility(viewPort.nextItem.row, viewPort.currentItem.row, viewPort.currentItem.column, data);
               }
             }
 
             scroll.lastScrollTop = st;
           }
 
-        }, 50));
+        }, OPTIONS.scroll_calculation_interval));
       }
     };
 
@@ -376,7 +406,7 @@
         data.viewPort.isAnimationInProgressX = true;
         data.structure.$viewPort.animate({
           "left": (left - leftOffset)
-        }, 800, function () {
+        }, OPTIONS.horizontal_animation_speed, OPTIONS.horizontal_animation_easing, function () {
 
           data.viewPort.prevItem.get$Column().hide();
           data.viewPort.prevItem.column = targetColumnIndex - 1;
@@ -418,7 +448,7 @@
 
         data.structure.$viewPort.animate({
           "left": (left - leftOffset)
-        }, 600, function () {
+        }, OPTIONS.horizontal_animation_speed, OPTIONS.horizontal_animation_easing, function () {
           data.viewPort.nextItem.get$Column().hide();
           data.viewPort.nextItem.column = targetColumnIndex + 1;
           data.viewPort.prevItem.column--;
@@ -451,6 +481,10 @@
 
         data.structure.$verticalPaging.empty();
         data.structure.$verticalPaging.append(html);
+
+        if (OPTIONS.initialize_vertical_paging_position) {
+          data.structure.$verticalPaging.css('top', _plugin.getHalfWindowHeight() - (data.structure.$verticalPaging.height() / 2));
+        }
       }
 
       function toggleHorizontalArrowVisibility(targetIndex, currentIndex, structure) {
@@ -495,7 +529,7 @@
 
       newScrollTop = scroll.lastScrollTop + structure.columns[viewPort.currentItem.column].rows[targetRowIndex].offset().top;
 
-      $column.animate({ scrollTop: newScrollTop }, 600, function () {
+      $column.animate({ scrollTop: newScrollTop }, OPTIONS.vertical_animation_speed, OPTIONS.vertical_animation_easing, function () {
         viewPort.isAnimationInProgressY = false;
 
         if (moveDown) {
@@ -528,8 +562,7 @@
       $nextItem.addClass("current");
     }
 
-    _plugin.toggleVerticalArrowVisibility = function ( currentRowIndex, targetRowIndex, targetColumnIndex, data )
-    {
+    _plugin.toggleVerticalArrowVisibility = function (currentRowIndex, targetRowIndex, targetColumnIndex, data) {
       var lastRowIndex = data.structure.columns[targetColumnIndex].numOfRows - 1;
 
       // when horizontal trasition takes place
@@ -564,6 +597,11 @@
         }
       }
     }
+
+    _plugin.getHalfWindowHeight = function () {
+      return $(window).height() / 2;
+    }
+
 
     //////////////////////////////////////
     // initialize plugin
