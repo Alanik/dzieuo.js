@@ -52,9 +52,7 @@
         window.location.hash = self.hash;
 
         $(window).on('hashchange', function () {
-          debugger;
           var hash;
-
           if (!data.viewPort.isAnimationInProgressX) {
             hash = parseInt(window.location.hash.substr(1));
 
@@ -63,7 +61,7 @@
                 self.hash = hash;
                 data.structure.$nextHorizontalArrow.attr('href', "#" + self.hash);
                 beginHorizontalTransitionFn(data, $(window).width() - 20, self.hash)
-              } else if (self.hash < hash) {
+              } else if (self.hash > hash) {
                 self.hash = hash;
                 data.structure.$prevHorizontalArrow.attr('href', "#" + self.hash);
                 beginHorizontalTransitionFn(data, -($(window).width() - 20), self.hash)
