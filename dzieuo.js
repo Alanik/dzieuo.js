@@ -19,6 +19,7 @@
 			initialize_horizontal_arrows_position: true,
 			initialize_vertical_arrows_position: true,
 			initialize_vertical_paging_position: true,
+      row_scroll_padding_top: 0,
 			horizontal_arrow_height: 92,
 			scroll_calculation_interval: 50,
 			horizontal_animation_easing: 'slide',
@@ -651,7 +652,7 @@
 
 			newScrollTop = scroll.lastScrollTop + structure.columns[viewPort.currentItem.column].rows[targetRowIndex].offset().top;
 
-			$column.animate( { scrollTop: newScrollTop }, OPTIONS.vertical_animation_speed, OPTIONS.vertical_animation_easing, function ()
+			$column.animate( { scrollTop: newScrollTop - OPTIONS.row_scroll_padding_top }, OPTIONS.vertical_animation_speed, OPTIONS.vertical_animation_easing, function ()
 			{
 				viewPort.isAnimationInProgressY = false;
 
