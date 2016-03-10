@@ -6,8 +6,6 @@
     // 1. #viewPort adds up css left property value resulting in a very big negative or positive css left value.
     // Perhaps it can be optimized - Left property should be +- screen width value.
 
-    var dzieuoApi;
-
     //default options
     var OPTIONS = {
       prev_arrow_content: '<img src="Images/arrow-left.png" alt="left navigation arrow">',
@@ -147,11 +145,20 @@
       },
       // 3
       setUpViewPort: function (structure) {
-        var $rows, $column, $columnInnerWrapper;
+        var $row, $rows, $column, $columnInnerWrapper;
         var viewPortContainerId = 'dzViewPort';
         var $viewPortContainer = $('<div id="' + viewPortContainerId + '"></div>');
         var columnInnerWrapperClass = 'dz-column-inner-wrapper';
         var $columns = structure.$dzieuo.children();
+
+        // add 'current' class to first dz-row in first column
+        if ($columns.length) {
+          $rows = $columns.first().children();
+          $row = $rows.first()
+          if ($row.length) {
+            $row.addClass('current')
+          }
+        }
 
         // set up inner wrapper per column
         $columns.each(function (index, element) {
@@ -359,6 +366,8 @@
               $nextRow = viewPort.nextItem.get$Row();
 
               if ($nextRow.offset().top <= winHeightHalf) {
+                _plugin.rowToggleCurrentClass(data, viewPort.nextItem.row, true);
+
                 viewPort.prevItem.row = viewPort.currentItem.row;
                 viewPort.currentItem.row = viewPort.nextItem.row;
 
@@ -377,6 +386,8 @@
               $currentRow = viewPort.currentItem.get$Row();
 
               if ($currentRow.offset().top >= winHeightHalf) {
+                _plugin.rowToggleCurrentClass(data, viewPort.prevItem.row, true);
+
                 viewPort.nextItem.row = viewPort.currentItem.row;
                 viewPort.currentItem.row = viewPort.prevItem.row;
 
@@ -488,6 +499,8 @@
 
           data.viewPort.isAnimationInProgressX = false;
 
+          _plugin.rowToggleCurrentClass(data, data.viewPort.currentItem.row, false);
+
           data.scroll.lastScrollTop = columnObj.$column.scrollTop();
         });
       }
@@ -528,6 +541,8 @@
           data.viewPort.prevItem.row = columnObj.currentRow - 1;
 
           data.viewPort.isAnimationInProgressX = false;
+
+          _plugin.rowToggleCurrentClass(data, data.viewPort.currentItem.row, false);
 
           data.scroll.lastScrollTop = columnObj.$column.scrollTop();
         });
@@ -578,6 +593,7 @@
     _plugin.beginVerticalTransition = function (data, targetRowIndex) {
       var viewPort = data.viewPort, scroll = data.scroll, structure = data.structure, moveDown = false, newScrollTop;
       var $column = structure.columns[viewPort.currentItem.column].$column;
+      var $targetRow = structure.columns[viewPort.currentItem.column].rows[targetRowIndex];
 
       if (viewPort.currentItem.row < targetRowIndex) {
         if ((viewPort.currentItem.row) === structure.columns[viewPort.currentItem.column].numOfRows - 1) {
@@ -593,11 +609,13 @@
 
       _plugin.toggleVerticalArrowVisibility(viewPort.currentItem.row, targetRowIndex, viewPort.currentItem.column, data);
       _plugin.updateVerticalPaging(structure.$verticalPaging, targetRowIndex);
+      _plugin.rowToggleCurrentClass(data, targetRowIndex, true);
+
       scroll.lastScrollTop = $column.scrollTop();
 
       viewPort.isAnimationInProgressY = true;
 
-      newScrollTop = scroll.lastScrollTop + structure.columns[viewPort.currentItem.column].rows[targetRowIndex].offset().top;
+      newScrollTop = scroll.lastScrollTop + $targetRow.offset().top;
 
       $column.animate({ scrollTop: newScrollTop - OPTIONS.row_scroll_padding_top }, OPTIONS.vertical_animation_speed, OPTIONS.vertical_animation_easing, function () {
         viewPort.isAnimationInProgressY = false;
@@ -609,7 +627,6 @@
           if ((viewPort.currentItem.row) !== structure.columns[viewPort.currentItem.column].numOfRows - 1) {
             viewPort.nextItem.row++;
           }
-
         } else {
           viewPort.currentItem.row = targetRowIndex;
           viewPort.nextItem.row = targetRowIndex + 1;
@@ -672,6 +689,14 @@
       return $(window).height() / 2;
     }
 
+    _plugin.rowToggleCurrentClass = function (data, targetRowIndex, isVerticalTransition) {
+      if (isVerticalTransition) {
+        data.viewPort.currentItem.get$Row().toggleClass('current');
+      }
+
+      data.structure.columns[data.viewPort.currentItem.column].rows[targetRowIndex].addClass('current');
+    }
+
     ///////////////////////////////////////////
     //initialize helper objects
     ///////////////////////////////////////////
@@ -694,14 +719,6 @@
 
     _plugin.URL_ROUTER.initialize();
 
-    //////////////////////////////////////
-    // public plugin api
-    //////////////////////////////////////
-    dzieuoApi = {
-
-    };
-
-    return dzieuoApi;
   }
 
   // jQuery plugin initialization
