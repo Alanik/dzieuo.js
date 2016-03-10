@@ -18,7 +18,6 @@
       initialize_vertical_arrows_position: true,
       initialize_vertical_paging_position: true,
       row_scroll_padding_top: 0,
-      horizontal_arrow_height: 92,
       scroll_calculation_interval: 50,
       horizontal_animation_easing: 'slide',
       horizontal_animation_speed: 800,
@@ -188,8 +187,8 @@
         structure.$horizontalNav = $nav;
 
         if (OPTIONS.initialize_horizontal_arrows_position) {
-          $prevArrow.css('top', _plugin.getHalfWindowHeight() - OPTIONS.horizontal_arrow_height / 2);
-          $nextArrow.css('top', _plugin.getHalfWindowHeight() - OPTIONS.horizontal_arrow_height / 2);
+          $prevArrow.css('top', _plugin.getHalfWindowHeight() - $prevArrow.height() / 2);
+          $nextArrow.css('top', _plugin.getHalfWindowHeight() - $nextArrow.height() / 2);
         }
       },
       // 5
@@ -398,8 +397,8 @@
 
             // horizontal arrows
             if (OPTIONS.initialize_horizontal_arrows_position) {
-              data.structure.$prevHorizontalArrow.css('top', winHalfHeight - (OPTIONS.horizontal_arrow_height / 2));
-              data.structure.$nextHorizontalArrow.css('top', winHalfHeight - (OPTIONS.horizontal_arrow_height / 2));
+              data.structure.$prevHorizontalArrow.css('top', winHalfHeight - (data.structure.$prevHorizontalArrow.height() / 2));
+              data.structure.$nextHorizontalArrow.css('top', winHalfHeight - (data.structure.$nextHorizontalArrow.height() / 2));
             }
 
             // vertical paging
