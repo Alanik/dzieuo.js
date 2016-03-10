@@ -25,6 +25,10 @@
   height: 400px;
 }
 
+  .dz-row .current {
+    background: yellow;
+  }
+
 #dzViewPort {
   top: 0;
   left: 0;
@@ -90,13 +94,15 @@
     }
 
 #dzHorizontalNav #dzNextArrow {
-  position: absolute;
+  position: fixed;
   right: 50px;
+  height: 92px;
 }
 
 #dzHorizontalNav #dzPrevArrow {
-  position: absolute;
+  position: fixed;
   left: 40px;
+  height: 92px;
 }
 
 #dzVerticalNav {

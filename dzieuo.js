@@ -59,11 +59,11 @@
               if (self.hash < hash) {
                 self.hash = hash;
                 data.structure.$nextHorizontalArrow.attr('href', "#" + self.hash);
-                beginHorizontalTransitionFn(data, $(window).width() - 20, self.hash)
+                beginHorizontalTransitionFn(data, self.hash)
               } else if (self.hash > hash) {
                 self.hash = hash;
                 data.structure.$prevHorizontalArrow.attr('href', "#" + self.hash);
-                beginHorizontalTransitionFn(data, -($(window).width() - 20), self.hash)
+                beginHorizontalTransitionFn(data, self.hash)
               }
             } else {
               self.hash = 0;
@@ -97,7 +97,8 @@
         currentItem: null, // new ViewPortItem(_data.structure, 0, 0 )
         nextItem: null, // new ViewPortItem(_data.structure, 1, 0 )
         isAnimationInProgressX: false,
-        isAnimationInProgressY: false
+        isAnimationInProgressY: false,
+        horizontalSlideOffset: 0
       },
       scroll: {
         lastScrollTop: 0,
@@ -141,6 +142,8 @@
         data.viewPort.currentItem = new ViewPortItem(data, 0, 0);
         data.viewPort.prevItem = new ViewPortItem(data, 0, 0)
         data.viewPort.nextItem = new ViewPortItem(data, 1, 1);
+
+        data.viewPort.horizontalSlideOffset = $(window).width() - 20;
       },
       // 3
       setUpViewPort: function (structure) {
@@ -175,8 +178,11 @@
         var $prevArrow = $("<a id ='" + prevArrowId + "' href='#' style='display:none;'></a>");
         var $nextArrow = $("<a id='" + nextArrowId + "' href='#'></a>");
 
+        var winHalfHeight = _plugin.getHalfWindowHeight();
+
         $prevArrow.html(OPTIONS.prev_arrow_content);
         $nextArrow.html(OPTIONS.next_arrow_content);
+
         $nav.append($prevArrow);
         $nav.append($nextArrow);
 
@@ -186,9 +192,10 @@
         structure.$nextHorizontalArrow = $nextArrow;
         structure.$horizontalNav = $nav;
 
+        // horizontal arrows
         if (OPTIONS.initialize_horizontal_arrows_position) {
-          $prevArrow.css('top', _plugin.getHalfWindowHeight() - $prevArrow.height() / 2);
-          $nextArrow.css('top', _plugin.getHalfWindowHeight() - $nextArrow.height() / 2);
+          $prevArrow.css('top', winHalfHeight - ($prevArrow.height() / 2));
+          $nextArrow.css('top', winHalfHeight - ($nextArrow.height() / 2));
         }
       },
       // 5
@@ -263,7 +270,6 @@
       setUpViewPortPositions: function (viewPort) {
         var currentViewPortItem = viewPort.currentItem, nextViewPortItem = viewPort.nextItem;
         var $currentViewPortElement = currentViewPortItem.get$Column(), $nextViewPortElement = nextViewPortItem.get$Column();
-        var leftOffset = $currentViewPortElement.width();
 
         $currentViewPortElement.show();
         $currentViewPortElement.css({ "left": 0, "top": 0 });
@@ -273,14 +279,14 @@
         data.structure.$dzieuo.on("click", "#dzNextArrow", function () {
           if (!data.viewPort.isAnimationInProgressX) {
             data.structure.$nextHorizontalArrow.attr('href', "#" + data.viewPort.nextItem.column);
-            _plugin.beginHorizontalTransition(data, $(window).width() - 20, data.viewPort.nextItem.column);
+            _plugin.beginHorizontalTransition(data, data.viewPort.nextItem.column);
           }
         })
 
         data.structure.$dzieuo.on("click", "#dzPrevArrow", function () {
           if (!data.viewPort.isAnimationInProgressX) {
             data.structure.$prevHorizontalArrow.attr('href', "#" + data.viewPort.prevItem.column);
-            _plugin.beginHorizontalTransition(data, -($(window).width() - 20), data.viewPort.prevItem.column);
+            _plugin.beginHorizontalTransition(data, data.viewPort.prevItem.column);
           }
         })
 
@@ -306,10 +312,10 @@
 
           if (!data.viewPort.isAnimationInProgressX && data.viewPort.currentItem.column !== targetColumn) {
             if (data.viewPort.currentItem.column < targetColumn) {
-              _plugin.beginHorizontalTransition(data, ($(window).width() - 20), targetColumn);
+              _plugin.beginHorizontalTransition(data, targetColumn);
             }
             else if (data.viewPort.currentItem.column > targetColumn) {
-              _plugin.beginHorizontalTransition(data, -($(window).width() - 20), targetColumn);
+              _plugin.beginHorizontalTransition(data, targetColumn);
             }
           }
         });
@@ -413,18 +419,16 @@
 
           }, 10);
         });
-
       }
-
     };
 
     ///////////////////////////////////////////
     //private other plugin  methods
     ///////////////////////////////////////////
-    _plugin.beginHorizontalTransition = function (data, leftOffset, targetColumn) {
+    _plugin.beginHorizontalTransition = function (data, targetColumn) {
       var columnObj, $row, topOffset, currentRow;
 
-      if (leftOffset > 0) {
+      if (data.viewPort.currentItem.column < targetColumn) {
         if ((data.viewPort.currentItem.column + 1) === data.structure.numOfColumns) {
           return false;
         }
@@ -467,11 +471,11 @@
 
         toggleHorizontalArrowVisibility(targetColumnIndex, data.viewPort.prevItem.column, data.structure);
 
-        columnObj.$column.css({ "left": leftOffset - left, "top": 0 });
+        columnObj.$column.css({ "left": data.viewPort.horizontalSlideOffset - left, "top": 0 });
 
         data.viewPort.isAnimationInProgressX = true;
         data.structure.$viewPort.animate({
-          "left": (left - leftOffset)
+          "left": (left - data.viewPort.horizontalSlideOffset)
         }, OPTIONS.horizontal_animation_speed, OPTIONS.horizontal_animation_easing, function () {
 
           data.viewPort.prevItem.get$Column().hide();
@@ -508,12 +512,12 @@
 
         toggleHorizontalArrowVisibility(targetColumnIndex, data.viewPort.nextItem.column, data.structure);
 
-        columnObj.$column.css({ "left": leftOffset - left, "top": 0 });
+        columnObj.$column.css({ "left": (-data.viewPort.horizontalSlideOffset) - left, "top": 0 });
 
         data.viewPort.isAnimationInProgressX = true;
 
         data.structure.$viewPort.animate({
-          "left": (left - leftOffset)
+          "left": (left + data.viewPort.horizontalSlideOffset)
         }, OPTIONS.horizontal_animation_speed, OPTIONS.horizontal_animation_easing, function () {
           data.viewPort.nextItem.get$Column().hide();
           data.viewPort.nextItem.column = targetColumnIndex + 1;
