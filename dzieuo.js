@@ -640,18 +640,18 @@
 
         // only one row present so hide both arrows
         if (lastRowIndex == 0) {
-          data.structure.$upVerticalArrow.hide();
-          data.structure.$downVerticalArrow.hide();
+          data.structure.$upVerticalArrow.fadeOut();
+          data.structure.$downVerticalArrow.fadeOut();
         }
         else if (targetRowIndex === 0) {
-          data.structure.$downVerticalArrow.show();
-          data.structure.$upVerticalArrow.hide();
+          data.structure.$downVerticalArrow.fadeIn();
+          data.structure.$upVerticalArrow.fadeOut();
         } else if (targetRowIndex === lastRowIndex) {
-          data.structure.$downVerticalArrow.hide();
-          data.structure.$upVerticalArrow.show();
+          data.structure.$downVerticalArrow.fadeOut();
+          data.structure.$upVerticalArrow.fadeIn();
         } else {
-          data.structure.$upVerticalArrow.show();
-          data.structure.$downVerticalArrow.show();
+          data.structure.$upVerticalArrow.fadeIn();
+          data.structure.$downVerticalArrow.fadeIn();
         }
       } else {
         if (currentRowIndex === 0) {
