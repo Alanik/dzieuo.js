@@ -1,7 +1,6 @@
 ﻿(function ($) {
+  "use strict";
   function createDzieuo($dzieuo, opts) {
-    "use strict";
-
     // issues TODO:
     // 1. #viewPort adds up css left property value resulting in a very big negative or positive css left value.
     // Perhaps it can be optimized - Left property should be +- screen width value.
@@ -20,7 +19,9 @@
       horizontal_animation_easing: 'slide',
       horizontal_animation_speed: 800,
       vertical_animation_easing: 'slide',
-      vertical_animation_speed: 800
+      vertical_animation_speed: 800,
+      hide_vertical_paging_when_single_row: true,
+      hide_horizontal_paging_when_single_column: true
     }
 
     $.extend(OPTIONS, opts);
@@ -137,10 +138,15 @@
       },
       // 2
       setUpViewPortItems: function (data) {
+        var col, row;
+
         data.viewPort.currentItem = new ViewPortItem(data, 0, 0);
         data.viewPort.prevItem = new ViewPortItem(data, 0, 0)
-        data.viewPort.nextItem = new ViewPortItem(data, 1, 1);
 
+        col = data.structure.numOfColumns == 1 ? 0 : 1;
+        row = data.structure.columns[0].numOfRows == 1 ? 0 : 1;
+
+        data.viewPort.nextItem = new ViewPortItem(data, col, row);
         data.viewPort.horizontalSlideOffset = $(window).width() - 20;
       },
       // 3
@@ -177,63 +183,74 @@
       },
       // 4
       setUpHorizontalNav: function (structure) {
-        var containerId = "dzHorizontalNav";
-        var prevArrowId = "dzPrevArrow";
-        var nextArrowId = "dzNextArrow";
+        var containerId = "dzHorizontalNav", prevArrowId = "dzPrevArrow", nextArrowId = "dzNextArrow";
+        var $nav, $prevArrow, $nextArrow, winHalfHeight, style = '';
 
-        var $nav = $("<nav id='" + containerId + "'></nav>");
-        var $prevArrow = $("<a id ='" + prevArrowId + "' href='#' style='display:none;'></a>");
-        var $nextArrow = $("<a id='" + nextArrowId + "' href='#'></a>");
+        $prevArrow = $("<a id ='" + prevArrowId + "' href='#' style='display:none'></a>");
 
-        var winHalfHeight = _plugin.getHalfWindowHeight();
+        if (!OPTIONS.hide_horizontal_paging_when_single_column || structure.numOfColumns > 1) {
 
-        $prevArrow.html(OPTIONS.prev_arrow_content);
-        $nextArrow.html(OPTIONS.next_arrow_content);
+          if (!OPTIONS.hide_horizontal_paging_when_single_column) {
+            style = "style='display:none'";
+          }
 
-        $nav.append($prevArrow);
-        $nav.append($nextArrow);
+          $nav = $("<nav id='" + containerId + "'></nav>");
+          $nextArrow = $("<a id='" + nextArrowId + "' href='#' " + style + "></a>");
 
-        structure.$dzieuo.append($nav);
+          winHalfHeight = _plugin.getHalfWindowHeight();
 
-        structure.$prevHorizontalArrow = $prevArrow;
-        structure.$nextHorizontalArrow = $nextArrow;
-        structure.$horizontalNav = $nav;
+          $prevArrow.html(OPTIONS.prev_arrow_content);
+          $nextArrow.html(OPTIONS.next_arrow_content);
 
-        // horizontal arrows
-        if (OPTIONS.initialize_horizontal_arrows_position) {
-          $prevArrow.css('top', winHalfHeight - ($prevArrow.height() / 2));
-          $nextArrow.css('top', winHalfHeight - ($nextArrow.height() / 2));
+          $nav.append($prevArrow);
+          $nav.append($nextArrow);
+
+          structure.$dzieuo.append($nav);
+
+          structure.$prevHorizontalArrow = $prevArrow;
+          structure.$nextHorizontalArrow = $nextArrow;
+          structure.$horizontalNav = $nav;
+
+          // horizontal arrows
+          if (OPTIONS.initialize_horizontal_arrows_position) {
+            $prevArrow.css('top', winHalfHeight - ($prevArrow.height() / 2));
+            $nextArrow.css('top', winHalfHeight - ($nextArrow.height() / 2));
+          }
         }
       },
       // 5
       setUpHorizontalPaging: function (structure) {
         var containerId = "dzHorizontalPaging";
         var pageItemClass = "dz-horizontal-paging-item";
+        var nav, $paging;
 
-        var html = "<nav id='" + containerId + "'><a class='" + pageItemClass + " current' href='#0' data-column='0'>";
+        if (!OPTIONS.hide_horizontal_paging_when_single_column || structure.numOfColumns > 1) {
+          nav = "<nav id='" + containerId + "'>"
+          nav += "<a class='" + pageItemClass + " current' href='#0' data-column='0'></a>";
+          for (var i = 1; i < structure.numOfColumns; i++) {
+            nav += "<a class='" + pageItemClass + "' href='#" + i + "' data-column='" + i + "'></a>";
+          }
+          nav += "</nav>";
 
+          $paging = $(nav);
+          structure.$dzieuo.append($paging);
 
-        for (var i = 1; i < structure.numOfColumns; i++) {
-          html += "<a class='" + pageItemClass + "' href='#" + i + "' data-column='" + i + "'>";
+          structure.$horizontalPaging = $paging;
         }
-
-        html += "</nav>";
-
-        var $paging = $(html);
-        structure.$dzieuo.append($paging);
-
-        structure.$horizontalPaging = $paging;
       },
       // 6
-      setUpVerticalNav: function (structure) {
-        var containerId = "dzVerticalNav";
-        var className = "dz-nav-arrows"
-        var prevArrowId = "dzUpArrow";
-        var nextArrowId = "dzDownArrow";
+      setUpVerticalNav: function (data) {
+        var containerId = "dzVerticalNav", className = "dz-nav-arrows", prevArrowId = "dzUpArrow", nextArrowId = "dzDownArrow";
+        var $prevArrow, $nextArrow, $nav = $("<nav id='" + containerId + "'></nav>");
+        var style = "style='display:none'", structure = data.structure;
 
-        var $nav = $("<nav id='" + containerId + "'></nav>");
-        var $prevArrow = $("<a id='" + prevArrowId + "' class='" + className + "' href='#' style='display:none;'></a>");
-        var $nextArrow = $("<a id='" + nextArrowId + "' class='" + className + "' href='#'></a>");
+        $prevArrow = $("<a id='" + prevArrowId + "' class='" + className + "' href='#' " + style + "></a>");
+
+        if (structure.columns[data.viewPort.currentItem.column].numOfRows > 1) {
+          style = '';
+        }
+
+        $nextArrow = $("<a id='" + nextArrowId + "' class='" + className + "' href='#' " + style + "></a>");
 
         $prevArrow.html(OPTIONS.up_arrow_content);
         $nextArrow.html(OPTIONS.down_arrow_content);
@@ -255,18 +272,20 @@
       setUpVerticalPaging: function (data) {
         var containerId = "dzVerticalPaging";
         var pageItemClass = "dz-vertical-paging-item";
+        var html = "<nav id='" + containerId + "'>";
 
-        var html = "<nav id='" + containerId + "'><a class='" + pageItemClass + " current' href='#" + data.viewPort.currentItem.column + "' data-row='0'>";
+        if (!OPTIONS.hide_vertical_paging_when_single_row || data.structure.columns[data.viewPort.currentItem.column].numOfRows > 1) {
+          html += "<a class='" + pageItemClass + " current' href='#" + data.viewPort.currentItem.column + "' data-row='0'>";
 
-        for (var i = 1; i < data.structure.columns[data.viewPort.currentItem.column].numOfRows; i++) {
-          html += "<a class='" + pageItemClass + "' href='#" + data.viewPort.currentItem.column + "' data-row='" + i + "'>";
+          for (var i = 1; i < data.structure.columns[data.viewPort.currentItem.column].numOfRows; i++) {
+            html += "<a class='" + pageItemClass + "' href='#" + data.viewPort.currentItem.column + "' data-row='" + i + "'>";
+          }
         }
 
         html += "</nav>";
 
         var $paging = $(html);
         data.structure.$dzieuo.append($paging);
-
         data.structure.$verticalPaging = $paging;
 
         if (OPTIONS.initialize_vertical_paging_position) {
@@ -275,9 +294,7 @@
       },
       // 8
       setUpViewPortPositions: function (viewPort) {
-        var currentViewPortItem = viewPort.currentItem, nextViewPortItem = viewPort.nextItem;
-        var $currentViewPortElement = currentViewPortItem.get$Column(), $nextViewPortElement = nextViewPortItem.get$Column();
-
+        var $currentViewPortElement = viewPort.currentItem.get$Column()
         $currentViewPortElement.show();
         $currentViewPortElement.css({ "left": 0, "top": 0 });
       },
@@ -413,7 +430,7 @@
             var winHalfHeight = _plugin.getHalfWindowHeight();
 
             // horizontal arrows
-            if (OPTIONS.initialize_horizontal_arrows_position) {
+            if (data.structure.numOfColumns > 1 && OPTIONS.initialize_horizontal_arrows_position) {
               data.structure.$prevHorizontalArrow.css('top', winHalfHeight - (data.structure.$prevHorizontalArrow.height() / 2));
               data.structure.$nextHorizontalArrow.css('top', winHalfHeight - (data.structure.$nextHorizontalArrow.height() / 2));
             }
@@ -557,15 +574,18 @@
       }
 
       function reCreateVerticalPaging(data, column) {
-        var verticalPagingItemClass = "dz-vertical-paging-item";
-        var html = "<a class='" + verticalPagingItemClass + "' href='#" + column + "' data-row='0'>";
-
-        for (var i = 1; i < data.structure.columns[column].numOfRows; i++) {
-          html += "<a class='" + verticalPagingItemClass + "' href='#" + column + "' data-row='" + i + "'>";
-        }
+        var html, verticalPagingItemClass = "dz-vertical-paging-item";
 
         data.structure.$verticalPaging.empty();
-        data.structure.$verticalPaging.append(html);
+
+        if (!OPTIONS.hide_vertical_paging_when_single_row || data.structure.columns[column].numOfRows > 1) {
+          html = "<a class='" + verticalPagingItemClass + "' href='#" + column + "' data-row='0'>";
+
+          for (var i = 1; i < data.structure.columns[column].numOfRows; i++) {
+            html += "<a class='" + verticalPagingItemClass + "' href='#" + column + "' data-row='" + i + "'>";
+          }
+          data.structure.$verticalPaging.append(html);
+        }
 
         if (OPTIONS.initialize_vertical_paging_position) {
           data.structure.$verticalPaging.css('top', _plugin.getHalfWindowHeight() - (data.structure.$verticalPaging.height() / 2));
@@ -710,7 +730,7 @@
     _plugin.setUpViewPort(_data.structure);
     _plugin.setUpHorizontalNav(_data.structure);
     _plugin.setUpHorizontalPaging(_data.structure);
-    _plugin.setUpVerticalNav(_data.structure);
+    _plugin.setUpVerticalNav(_data);
     _plugin.setUpVerticalPaging(_data);
     _plugin.setUpViewPortPositions(_data.viewPort);
     _plugin.setUpClickHandlers(_data);

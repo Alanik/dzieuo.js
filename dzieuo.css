@@ -67,7 +67,6 @@
 #dzVerticalPaging {
   position: fixed;
   right: 130px;
-  background: white;
   top: 200px;
 }
 
@@ -106,7 +105,6 @@
   top: 300px;
   right: 240px;
   height: 100px;
-  background: white;
   text-align: center;
 }
 
