@@ -101,7 +101,9 @@
       },
       scroll: {
         lastScrollTop: 0,
-        shouldCalculateScroll: true
+        shouldCalculateScroll: true,
+        upArrowVisible: false,
+        downArrowVisible: true
       }
     };
 
@@ -691,16 +693,27 @@
           data.structure.$downVerticalArrow.fadeIn();
         }
       } else {
-        if (currentRowIndex === 0) {
-          data.structure.$upVerticalArrow.fadeIn();
-        } else if (currentRowIndex === lastRowIndex) {
-          data.structure.$downVerticalArrow.fadeIn();
+        // when vertical transition or vertical scroll takes place
+
+        // scrolling within one dz-row 
+        if (currentRowIndex === targetRowIndex) {
+          return;
         }
 
-        if (targetRowIndex === 0) {
+        if (currentRowIndex === 0 && !data.scroll.upArrowVisible) {
+          data.structure.$upVerticalArrow.fadeIn();
+          data.scroll.upArrowVisible = true;
+        } else if (currentRowIndex === lastRowIndex && !data.scroll.downArrowVisible) {
+          data.structure.$downVerticalArrow.fadeIn();
+          data.scroll.downArrowVisible = true;
+        }
+
+        if (targetRowIndex === 0 && data.scroll.upArrowVisible) {
           data.structure.$upVerticalArrow.fadeOut();
-        } else if (targetRowIndex === lastRowIndex) {
+          data.scroll.upArrowVisible = false;
+        } else if (targetRowIndex === lastRowIndex && data.scroll.downArrowVisible) {
           data.structure.$downVerticalArrow.fadeOut();
+          data.scroll.downArrowVisible = false;
         }
       }
     }
