@@ -101,9 +101,7 @@
       },
       scroll: {
         lastScrollTop: 0,
-        shouldCalculateScroll: true,
-        upArrowVisible: false,
-        downArrowVisible: true
+        shouldCalculateScroll: true
       }
     };
 
@@ -700,20 +698,16 @@
           return;
         }
 
-        if (currentRowIndex === 0 && !data.scroll.upArrowVisible) {
+        if (currentRowIndex === 0) {
           data.structure.$upVerticalArrow.fadeIn();
-          data.scroll.upArrowVisible = true;
-        } else if (currentRowIndex === lastRowIndex && !data.scroll.downArrowVisible) {
+        } else if (currentRowIndex === lastRowIndex) {
           data.structure.$downVerticalArrow.fadeIn();
-          data.scroll.downArrowVisible = true;
         }
 
-        if (targetRowIndex === 0 && data.scroll.upArrowVisible) {
+        if (targetRowIndex === 0) {
           data.structure.$upVerticalArrow.fadeOut();
-          data.scroll.upArrowVisible = false;
-        } else if (targetRowIndex === lastRowIndex && data.scroll.downArrowVisible) {
+        } else if (targetRowIndex === lastRowIndex) {
           data.structure.$downVerticalArrow.fadeOut();
-          data.scroll.downArrowVisible = false;
         }
       }
     }
