@@ -1,6 +1,7 @@
 ﻿(function ($) {
   "use strict";
   function createDzieuo($dzieuo, opts) {
+
     // issues TODO:
     // 1. #viewPort adds up css left property value resulting in a very big negative or positive css left value.
     // Perhaps it can be optimized - Left property should be +- screen width value.
@@ -147,7 +148,7 @@
         row = data.structure.columns[0].numOfRows == 1 ? 0 : 1;
 
         data.viewPort.nextItem = new ViewPortItem(data, col, row);
-        data.viewPort.horizontalSlideOffset = $(window).width() - 20;
+        data.viewPort.horizontalSlideOffset = data.structure.$dzieuo.width() - 20;
       },
       // 3
       setUpViewPort: function (structure) {
@@ -299,6 +300,10 @@
         $currentViewPortElement.css({ "left": 0, "top": 0 });
       },
       // 9
+      setUpInitialColumnCssOverflow : function(column, structure){
+        _plugin.setUpColumnCssOverflow(column, structure);
+      },
+      // 10
       setUpClickHandlers: function (data) {
         data.structure.$dzieuo.on("click", "#dzNextArrow", function () {
           if (!data.viewPort.isAnimationInProgressX) {
@@ -353,7 +358,7 @@
           }
         })
       },
-      // 10
+      // 11
       updateVerticalPagingOnWindowScroll: function (data) {
         var currentColumn, winHeightHalf, $nextRow, $currentRow;
         var viewPort = data.viewPort, structure = data.structure, scroll = data.scroll;
@@ -428,7 +433,7 @@
 
         }, OPTIONS.scroll_calculation_interval));
       },
-      // 11
+      // 12
       updatePagingAndArrowsOnWindowResize: function (data) {
         $(window).on('resize', function () {
           setTimeout(function () {
@@ -452,7 +457,7 @@
 
           }, 10);
         });
-      }
+      },
     };
 
     ///////////////////////////////////////////
@@ -491,12 +496,7 @@
 
         columnObj.$column.show();
 
-        // if column div's height is less than the window's height hide scrollbar
-        if (columnObj.$column.children().height() <= $(window).height()) {
-          columnObj.$column.css("overflow-y", "hidden");
-        } else {
-          columnObj.$column.css("overflow-y", "scroll");
-        }
+        _plugin.setUpColumnCssOverflow(targetColumnIndex, data.structure);
 
         data.viewPort.prevItem.column = data.viewPort.currentItem.column;
         data.viewPort.nextItem.column = targetColumnIndex;
@@ -534,8 +534,8 @@
 
         columnObj.$column.show();
 
-        // if column div's height is less than the window's height hide scrollbar
-        if (columnObj.$column.children().height() <= $(window).height()) {
+        // if column div's height is less than the dzieuo's height hide scrollbar
+        if (columnObj.$column.children().height() <= data.structure.$dzieuo.height()) {
           columnObj.$column.css("overflow-y", "hidden");
         } else {
           columnObj.$column.css("overflow-y", "scroll");
@@ -728,6 +728,17 @@
       data.structure.columns[data.viewPort.currentItem.column].rows[targetRowIndex].addClass('current');
     }
 
+    _plugin.setUpColumnCssOverflow = function (column, structure) {
+      var columnObj = structure.columns[column];
+
+      // if column div's height is less than the #dzieuo's height hide scrollbar
+      if (structure.columns[column].$column.children().height() <= structure.$dzieuo.height()) {
+        columnObj.$column.css("overflow-y", "hidden");
+      } else {
+        columnObj.$column.css("overflow-y", "scroll");
+      }
+    }
+
     ///////////////////////////////////////////
     //initialize helper objects
     ///////////////////////////////////////////
@@ -744,6 +755,7 @@
     _plugin.setUpVerticalNav(_data);
     _plugin.setUpVerticalPaging(_data);
     _plugin.setUpViewPortPositions(_data.viewPort);
+    _plugin.setUpInitialColumnCssOverflow(0, _data.structure);
     _plugin.setUpClickHandlers(_data);
     _plugin.updateVerticalPagingOnWindowScroll(_data);
     _plugin.updatePagingAndArrowsOnWindowResize(_data);
