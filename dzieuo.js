@@ -300,8 +300,8 @@
         $currentViewPortElement.css({ "left": 0, "top": 0 });
       },
       // 9
-      setUpInitialColumnCssOverflow: function (column, structure) {
-        _plugin.setUpColumnCssOverflow(column, structure);
+      setUpInitialColumnCssOverflow: function (structure) {
+        _plugin.setUpColumnCssOverflow(0, structure);
       },
       // 10
       setUpClickHandlers: function (data) {
@@ -758,13 +758,12 @@
     _plugin.setUpVerticalNav(_data);
     _plugin.setUpVerticalPaging(_data);
     _plugin.setUpViewPortPositions(_data.viewPort);
-    _plugin.setUpInitialColumnCssOverflow(0, _data.structure);
+    _plugin.setUpInitialColumnCssOverflow(_data.structure);
     _plugin.setUpClickHandlers(_data);
     _plugin.updateVerticalPagingOnWindowScroll(_data);
     _plugin.updatePagingAndArrowsOnWindowResize(_data);
 
     _plugin.URL_ROUTER.initialize();
-
   }
 
   // jQuery plugin initialization
