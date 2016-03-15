@@ -300,7 +300,7 @@
         $currentViewPortElement.css({ "left": 0, "top": 0 });
       },
       // 9
-      setUpInitialColumnCssOverflow : function(column, structure){
+      setUpInitialColumnCssOverflow: function (column, structure) {
         _plugin.setUpColumnCssOverflow(column, structure);
       },
       // 10
@@ -711,6 +711,9 @@
           structure.$upVerticalArrow.fadeOut();
         } else if (targetRowIndex === lastRowIndex) {
           structure.$downVerticalArrow.fadeOut();
+          structure.$upVerticalArrow.fadeIn();
+        } else {
+          structure.$downVerticalArrow.fadeIn();
           structure.$upVerticalArrow.fadeIn();
         }
       }
