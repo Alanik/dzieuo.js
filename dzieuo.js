@@ -373,6 +373,11 @@
         $(".dz-column").scroll(throttle(function () {
           var st, currentColumn = viewPort.currentItem.column;
 
+          // if only one row exists no need to do any calculations
+          if (structure.columns[currentColumn].numOfRows === 1) {
+            return;
+          }
+
           if (scroll.shouldCalculateScroll) {
 
             winHeightHalf = _plugin.getHalfWindowHeight();
@@ -382,7 +387,7 @@
             if (st > scroll.lastScrollTop) {
               $nextRow = viewPort.nextItem.get$Row();
 
-              if ($nextRow.offset().top <= winHeightHalf) {
+              if ($nextRow.offset().top <= winHeightHalf && viewPort.currentItem.row !== viewPort.nextItem.row) {
                 _plugin.rowToggleCurrentClass(data, viewPort.nextItem.row, true);
 
                 viewPort.prevItem.row = viewPort.currentItem.row;
@@ -402,7 +407,7 @@
             else {
               $currentRow = viewPort.currentItem.get$Row();
 
-              if ($currentRow.offset().top >= winHeightHalf) {
+              if ($currentRow.offset().top >= winHeightHalf && viewPort.currentItem.row !== viewPort.prevItem.row) {
                 _plugin.rowToggleCurrentClass(data, viewPort.prevItem.row, true);
 
                 viewPort.nextItem.row = viewPort.currentItem.row;
@@ -674,40 +679,39 @@
 
       // when horizontal trasition takes place
       if (targetColumnIndex !== data.viewPort.currentItem.column) {
-
-        // only one row present so hide both arrows
-        if (lastRowIndex == 0) {
-          data.structure.$upVerticalArrow.fadeOut();
-          data.structure.$downVerticalArrow.fadeOut();
-        }
-        else if (targetRowIndex === 0) {
-          data.structure.$downVerticalArrow.fadeIn();
-          data.structure.$upVerticalArrow.fadeOut();
-        } else if (targetRowIndex === lastRowIndex) {
-          data.structure.$downVerticalArrow.fadeOut();
-          data.structure.$upVerticalArrow.fadeIn();
-        } else {
-          data.structure.$upVerticalArrow.fadeIn();
-          data.structure.$downVerticalArrow.fadeIn();
-        }
-      } else {
+        updateVisibilityForHorizontalTransition(data.structure, targetRowIndex, lastRowIndex)
+      }
         // when vertical transition or vertical scroll takes place
+      else {
+        updateVisibilityForVerticalTransition(data.structure, currentRowIndex, targetRowIndex);
+      }
 
-        // scrolling within one dz-row 
-        if (currentRowIndex === targetRowIndex) {
-          return;
-        }
-
+      function updateVisibilityForVerticalTransition(structure, currentRowIndex, targetRowIndex) {
         if (currentRowIndex === 0) {
-          data.structure.$upVerticalArrow.fadeIn();
+          structure.$upVerticalArrow.fadeIn();
         } else if (currentRowIndex === lastRowIndex) {
-          data.structure.$downVerticalArrow.fadeIn();
+          structure.$downVerticalArrow.fadeIn();
         }
 
         if (targetRowIndex === 0) {
-          data.structure.$upVerticalArrow.fadeOut();
+          structure.$upVerticalArrow.fadeOut();
         } else if (targetRowIndex === lastRowIndex) {
-          data.structure.$downVerticalArrow.fadeOut();
+          structure.$downVerticalArrow.fadeOut();
+        }
+      }
+
+      function updateVisibilityForHorizontalTransition(structure, targetRowIndex, lastRowIndex) {
+        // only one row present so hide both arrows
+        if (lastRowIndex == 0) {
+          structure.$upVerticalArrow.fadeOut();
+          structure.$downVerticalArrow.fadeOut();
+        }
+        else if (targetRowIndex === 0) {
+          structure.$downVerticalArrow.fadeIn();
+          structure.$upVerticalArrow.fadeOut();
+        } else if (targetRowIndex === lastRowIndex) {
+          structure.$downVerticalArrow.fadeOut();
+          structure.$upVerticalArrow.fadeIn();
         }
       }
     }
