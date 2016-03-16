@@ -457,7 +457,7 @@
 
           }, 10);
         });
-      },
+      }
     };
 
     ///////////////////////////////////////////
@@ -665,15 +665,15 @@
         scroll.lastScrollTop = newScrollTop;
         scroll.shouldCalculateScroll = true;
       });
-    }
+    };
 
     _plugin.updateVerticalPaging = function ($paging, targetRowIndex) {
       var $item = $paging.find(".dz-vertical-paging-item.current");
       $item.removeClass("current");
       var $nextItem = $paging.find('[data-row="' + targetRowIndex + '"]');
       $nextItem.addClass("current");
-    }
-
+    };
+    
     _plugin.toggleVerticalArrowVisibility = function (currentRowIndex, targetRowIndex, targetColumnIndex, data) {
       var lastRowIndex = data.structure.columns[targetColumnIndex].numOfRows - 1;
 
@@ -717,11 +717,11 @@
           structure.$upVerticalArrow.fadeIn();
         }
       }
-    }
+    };
 
     _plugin.getHalfWindowHeight = function () {
       return $(window).height() / 2;
-    }
+    };
 
     _plugin.rowToggleCurrentClass = function (data, targetRowIndex, isVerticalTransition) {
       if (isVerticalTransition) {
@@ -729,7 +729,7 @@
       }
 
       data.structure.columns[data.viewPort.currentItem.column].rows[targetRowIndex].addClass('current');
-    }
+    };
 
     _plugin.setUpColumnCssOverflow = function (column, structure) {
       var columnObj = structure.columns[column];
@@ -740,7 +740,7 @@
       } else {
         columnObj.$column.css("overflow-y", "scroll");
       }
-    }
+    };
 
     ///////////////////////////////////////////
     //initialize helper objects
