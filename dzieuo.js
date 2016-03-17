@@ -1,4 +1,12 @@
-﻿(function ($) {
+﻿// *** Description ***
+// Dzieuo.js - JQuery 2D slider plugin.
+// Version: 1.0.0
+// Created by Alan Budziński @ http://www.dzieuo.io
+// GitHub: https://github.com/Alanik/dzieuo.js
+// License: The MIT License (MIT)
+// *******************
+
+(function ($) {
   "use strict";
   function createDzieuo($dzieuo, opts) {
 
@@ -673,7 +681,7 @@
       var $nextItem = $paging.find('[data-row="' + targetRowIndex + '"]');
       $nextItem.addClass("current");
     };
-    
+
     _plugin.toggleVerticalArrowVisibility = function (currentRowIndex, targetRowIndex, targetColumnIndex, data) {
       var lastRowIndex = data.structure.columns[targetColumnIndex].numOfRows - 1;
 
@@ -766,7 +774,6 @@
     _plugin.URL_ROUTER.initialize();
   }
 
-  // jQuery plugin initialization
   $.fn.dzieuo = function (params) {
     return createDzieuo(this, params);
   };
