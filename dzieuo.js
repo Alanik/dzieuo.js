@@ -1,5 +1,5 @@
 ﻿// *** Description ***
-// Dzieuo.js - JQuery 2D slider plugin.
+// Dzieuo.js - jQuery 2D slider plugin.
 // Version: 1.0.0
 // Created by Alan Budziński @ http://www.dzieuo.io
 // GitHub: https://github.com/Alanik/dzieuo.js
