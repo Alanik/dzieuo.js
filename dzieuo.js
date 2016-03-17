@@ -114,7 +114,7 @@
       // call order:
       // 1
       setUpDataStructure: function (structure) {
-        var $columns = structure.$dzieuo.children();
+        var $columns = structure.$dzieuo.children('.dz-column');
         var numOfColumns = 0;
         var numOfRows = 0;
 
@@ -125,7 +125,7 @@
 
           structure.columns.push(column);
 
-          $column.children().each(function (rowIndex) {
+          $column.children(".dz-row").each(function (rowIndex) {
             numOfRows++;
             column.rows.push($(this));
           });
