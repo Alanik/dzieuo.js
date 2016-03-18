@@ -14,6 +14,17 @@
     // 1. #viewPort adds up css left property value resulting in a very big negative or positive css left value.
     // Perhaps it can be optimized - Left property should be +- screen width value.
 
+    // api
+    // http://stackoverflow.com/questions/399867/custom-events-in-jquery
+    var api = {
+      before_transition: function () {
+
+      },
+      after_transition: function () {
+
+      }
+    };
+
     //default options
     var OPTIONS = {
       prev_arrow_content: '<img src="Images/arrow-left.png" alt="left navigation arrow">',
@@ -36,7 +47,7 @@
     $.extend(OPTIONS, opts);
 
     /////////////////////////////////////////
-    //private object definitions
+    // private object definitions
     /////////////////////////////////////////
     var ViewPortItem = function (data, column, row) {
       this.column = column;
@@ -53,36 +64,37 @@
 
     var urlRouter = function (data, beginHorizontalTransitionFn) {
       var self = this;
-      self.hash = 0;
 
       self.initialize = function () {
+        self.hash = 0;
         window.location.hash = self.hash;
 
         $(window).on('hashchange', function () {
-          var hash;
-          if (!data.viewPort.isAnimationInProgressX) {
-            hash = parseInt(window.location.hash.substr(1));
+          var hash = parseInt(window.location.hash.substr(1));
 
-            if (hash >= 0 && hash < data.structure.numOfColumns) {
-              if (self.hash < hash) {
-                self.hash = hash;
-                data.structure.$nextHorizontalArrow.attr('href', "#" + self.hash);
-                beginHorizontalTransitionFn(data, self.hash)
-              } else if (self.hash > hash) {
-                self.hash = hash;
-                data.structure.$prevHorizontalArrow.attr('href', "#" + self.hash);
-                beginHorizontalTransitionFn(data, self.hash)
-              }
+          if (hash >= 0 && hash < data.structure.numOfColumns) {
+            if (self.hash < hash || self.hash > hash) {
+              setUpArrowHrefAndBeginTransition();
             } else {
               self.hash = 0;
               window.location.hash = self.hash;
             }
           }
-        })
-      }
-    }
+
+          function setUpArrowHrefAndBeginTransition() {
+            self.hash = hash;
+
+            if (!data.viewPort.isAnimationInProgressX) {
+              data.structure.$prevHorizontalArrow.attr('href', "#" + (self.hash - 1));
+              data.structure.$nextHorizontalArrow.attr('href', "#" + (self.hash + 1));
+              beginHorizontalTransitionFn(data, self.hash)
+            }
+          };
+        });
+      };
+    };
     ///////////////////////////////////////////
-    //private plugin state
+    // private plugin state
     ///////////////////////////////////////////
     var _data = {
       structure: {
@@ -96,7 +108,7 @@
         $downVerticalArrow: null,
         $upVerticalArrow: null,
         $verticalNav: null,
-        columns: [ //{ $column : $(column), rows : [ $(row) , $(row) ], numOfRows = rows.length, currentRow = 0 }
+        columns: [ // { $column : $(column), rows : [ $(row) , $(row) ], numOfRows = rows.length, currentRow = 0 }
         ],
         numOfColumns: 0
       },
@@ -115,7 +127,7 @@
     };
 
     ///////////////////////////////////////////
-    //private plugin initialization methods
+    // private plugin initialization methods
     ///////////////////////////////////////////
     var _plugin = {
 
@@ -195,7 +207,7 @@
         var containerId = "dzHorizontalNav", prevArrowId = "dzPrevArrow", nextArrowId = "dzNextArrow";
         var $nav, $prevArrow, $nextArrow, winHalfHeight, style = '';
 
-        $prevArrow = $("<a id ='" + prevArrowId + "' href='#' style='display:none'></a>");
+        $prevArrow = $("<a id ='" + prevArrowId + "' href='#0' style='display:none'></a>");
 
         if (!OPTIONS.hide_horizontal_paging_when_single_column || structure.numOfColumns > 1) {
 
@@ -204,7 +216,7 @@
           }
 
           $nav = $("<nav id='" + containerId + "'></nav>");
-          $nextArrow = $("<a id='" + nextArrowId + "' href='#' " + style + "></a>");
+          $nextArrow = $("<a id='" + nextArrowId + "' href='#1' " + style + "></a>");
 
           winHalfHeight = _plugin.getHalfWindowHeight();
 
@@ -313,20 +325,6 @@
       },
       // 10
       setUpClickHandlers: function (data) {
-        data.structure.$dzieuo.on("click", "#dzNextArrow", function () {
-          if (!data.viewPort.isAnimationInProgressX) {
-            data.structure.$nextHorizontalArrow.attr('href', "#" + data.viewPort.nextItem.column);
-            _plugin.beginHorizontalTransition(data, data.viewPort.nextItem.column);
-          }
-        })
-
-        data.structure.$dzieuo.on("click", "#dzPrevArrow", function () {
-          if (!data.viewPort.isAnimationInProgressX) {
-            data.structure.$prevHorizontalArrow.attr('href', "#" + data.viewPort.prevItem.column);
-            _plugin.beginHorizontalTransition(data, data.viewPort.prevItem.column);
-          }
-        })
-
         data.structure.$dzieuo.on("click", "#dzDownArrow", function () {
           if (!data.viewPort.isAnimationInProgressY) {
             data.scroll.shouldCalculateScroll = false;
@@ -348,10 +346,11 @@
           var targetColumn = $(this).data("column");
 
           if (!data.viewPort.isAnimationInProgressX && data.viewPort.currentItem.column !== targetColumn) {
-            if (data.viewPort.currentItem.column < targetColumn) {
-              _plugin.beginHorizontalTransition(data, targetColumn);
-            }
-            else if (data.viewPort.currentItem.column > targetColumn) {
+            if (data.viewPort.currentItem.column < targetColumn || data.viewPort.currentItem.column > targetColumn) {
+
+              data.structure.$prevHorizontalArrow.attr('href', "#" + (targetColumn - 1));
+              data.structure.$nextHorizontalArrow.attr('href', "#" + (targetColumn + 1));
+
               _plugin.beginHorizontalTransition(data, targetColumn);
             }
           }
@@ -469,7 +468,7 @@
     };
 
     ///////////////////////////////////////////
-    //private other plugin  methods
+    // private other plugin  methods
     ///////////////////////////////////////////
     _plugin.beginHorizontalTransition = function (data, targetColumn) {
       var columnObj, $row, topOffset, currentRow;
@@ -751,7 +750,7 @@
     };
 
     ///////////////////////////////////////////
-    //initialize helper objects
+    // initialize helper objects
     ///////////////////////////////////////////
     _plugin.URL_ROUTER = new urlRouter(_data, _plugin.beginHorizontalTransition);
 
@@ -772,6 +771,8 @@
     _plugin.updatePagingAndArrowsOnWindowResize(_data);
 
     _plugin.URL_ROUTER.initialize();
+
+    return api;
   }
 
   $.fn.dzieuo = function (params) {
