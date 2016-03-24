@@ -16,6 +16,20 @@
 
     // global custom events EXAMPLE HOW TO USE IT
     $(document).bind("horizontal_transition:before", function (e, arg) {
+      console.log("horizontal_transition:before");
+      console.log(arg);
+    });
+    $(document).bind("vertical_transition:before", function (e, arg) {
+      console.log("vertical_transition:before" + arg);
+      console.log(arg);
+    });
+    $(document).bind("horizontal_transition:after", function (e, arg) {
+      console.log("horizontal_transition:after" + arg);
+      console.log(arg);
+    });
+    $(document).bind("vertical_transition:after", function (e, arg) {
+      console.log("vertical_transition:after" + arg);
+      console.log(arg);
     });
 
 
@@ -39,6 +53,16 @@
     }
 
     $.extend(OPTIONS, opts);
+
+    /////////////////////////////////////////////
+    //CUSTOM EVENTS
+    ////////////////////////////////////////////
+    var CUSTOM_EVENTS = {
+      horizontalTransitionBefore: 'horizontal_transition:before',
+      horizontalTransitionAfter: 'horizontal_transition:after',
+      verticalTransitionBefore: 'vertical_transition:before',
+      verticalTransitionAfter: 'vertical_transition:after'
+    };
 
     /////////////////////////////////////////
     // private object definitions
@@ -498,44 +522,49 @@
       }
 
       function moveToNext(data, targetColumnIndex) {
-        var columnObj = data.structure.columns[targetColumnIndex];
-        var left = data.structure.$viewPort.offset().left;
+        var viewPort = data.viewPort, structure = data.structure;
+        var columnObj = structure.columns[targetColumnIndex];
+        var left = structure.$viewPort.offset().left;
         var $row = columnObj.rows[columnObj.currentRow];
+        var oldColumn = viewPort.currentItem.column;
 
         columnObj.$column.show();
 
         _plugin.setUpColumnCssOverflow(targetColumnIndex, data.structure);
 
-        data.viewPort.prevItem.column = data.viewPort.currentItem.column;
-        data.viewPort.nextItem.column = targetColumnIndex;
-        data.viewPort.currentItem.column = targetColumnIndex;
+        viewPort.prevItem.column = data.viewPort.currentItem.column;
+        viewPort.nextItem.column = targetColumnIndex;
+        viewPort.currentItem.column = targetColumnIndex;
 
-        toggleHorizontalArrowVisibility(targetColumnIndex, data.viewPort.prevItem.column, data.structure);
+        toggleHorizontalArrowVisibility(targetColumnIndex, viewPort.prevItem.column, structure);
 
-        columnObj.$column.css({ "left": data.viewPort.horizontalSlideOffset - left, "top": 0 });
+        columnObj.$column.css({ "left": viewPort.horizontalSlideOffset - left, "top": 0 });
 
-        data.viewPort.isAnimationInProgressX = true;
+        viewPort.isAnimationInProgressX = true;
 
-        param = new TransitionEventParam(data.viewPort.prevItem.column, data.viewPort.currentItem.column, data.viewPort.currentItem.row, data.structure.columns[data.viewPort.currentItem.column].currentRow);
-        $.event.trigger('horizontal_transition:before', param);
+        param = new TransitionEventParam(viewPort.prevItem.column, viewPort.currentItem.column, viewPort.currentItem.row, structure.columns[viewPort.currentItem.column].currentRow);
+        $.event.trigger(CUSTOM_EVENTS.horizontalTransitionBefore, param);
 
-        data.structure.$viewPort.animate({
-          "left": (left - data.viewPort.horizontalSlideOffset)
+        structure.$viewPort.animate({
+          "left": (left - viewPort.horizontalSlideOffset)
         }, OPTIONS.horizontal_animation_speed, OPTIONS.horizontal_animation_easing, function () {
 
-          data.viewPort.prevItem.get$Column().hide();
-          data.viewPort.prevItem.column = targetColumnIndex - 1;
-          data.viewPort.nextItem.column++;
+          viewPort.prevItem.get$Column().hide();
+          viewPort.prevItem.column = targetColumnIndex - 1;
+          viewPort.nextItem.column++;
 
-          data.viewPort.currentItem.row = columnObj.currentRow;
-          data.viewPort.prevItem.row = columnObj.currentRow - 1;
-          data.viewPort.nextItem.row = columnObj.currentRow + 1;
+          viewPort.currentItem.row = columnObj.currentRow;
+          viewPort.prevItem.row = columnObj.currentRow - 1;
+          viewPort.nextItem.row = columnObj.currentRow + 1;
 
-          data.viewPort.isAnimationInProgressX = false;
+          viewPort.isAnimationInProgressX = false;
 
-          _plugin.rowToggleCurrentClass(data, data.viewPort.currentItem.row, false);
+          _plugin.rowToggleCurrentClass(data, viewPort.currentItem.row, false);
 
           data.scroll.lastScrollTop = columnObj.$column.scrollTop();
+
+          param = new TransitionEventParam(oldColumn, targetColumnIndex, structure.columns[oldColumn].currentRow, structure.columns[targetColumnIndex].currentRow);
+          $.event.trigger(CUSTOM_EVENTS.horizontalTransitionAfter, param);
         });
       }
 
@@ -544,6 +573,7 @@
         var columnObj = structure.columns[targetColumnIndex]
         var left = structure.$viewPort.offset().left;
         var $row = columnObj.rows[columnObj.currentRow];
+        var oldColumn = viewPort.currentItem.column;
 
         columnObj.$column.show();
 
@@ -565,7 +595,7 @@
         viewPort.isAnimationInProgressX = true;
 
         param = new TransitionEventParam(viewPort.nextItem.column, viewPort.currentItem.column, viewPort.currentItem.row, structure.columns[viewPort.currentItem.column].currentRow);
-        $.event.trigger('horizontal_transition:before', param);
+        $.event.trigger(CUSTOM_EVENTS.horizontalTransitionBefore, param);
 
         structure.$viewPort.animate({
           "left": (left + viewPort.horizontalSlideOffset)
@@ -583,6 +613,9 @@
           _plugin.rowToggleCurrentClass(data, viewPort.currentItem.row, false);
 
           data.scroll.lastScrollTop = columnObj.$column.scrollTop();
+
+          param = new TransitionEventParam(oldColumn, targetColumnIndex, structure.columns[oldColumn].currentRow, structure.columns[targetColumnIndex].currentRow);
+          $.event.trigger(CUSTOM_EVENTS.horizontalTransitionAfter, param);
         });
       }
 
@@ -635,6 +668,7 @@
       var param, viewPort = data.viewPort, scroll = data.scroll, structure = data.structure, moveDown = false, newScrollTop;
       var $column = structure.columns[viewPort.currentItem.column].$column;
       var $targetRow = structure.columns[viewPort.currentItem.column].rows[targetRowIndex];
+      var oldRow;
 
       if (viewPort.currentItem.row < targetRowIndex) {
         if ((viewPort.currentItem.row) === structure.columns[viewPort.currentItem.column].numOfRows - 1) {
@@ -659,8 +693,9 @@
       newScrollTop = scroll.lastScrollTop + $targetRow.offset().top;
 
       param = new TransitionEventParam(viewPort.currentItem.column, viewPort.currentItem.column, viewPort.currentItem.row, targetRowIndex);
+      $.event.trigger(CUSTOM_EVENTS.verticalTransitionBefore, param);
 
-      $.event.trigger("vertical_transition:before", param);
+      oldRow = viewPort.currentItem.row;
 
       $column.animate({ scrollTop: newScrollTop - OPTIONS.row_scroll_padding_top }, OPTIONS.vertical_animation_speed, OPTIONS.vertical_animation_easing, function () {
         viewPort.isAnimationInProgressY = false;
@@ -684,6 +719,9 @@
         structure.columns[viewPort.currentItem.column].currentRow = viewPort.currentItem.row;
         scroll.lastScrollTop = newScrollTop;
         scroll.shouldCalculateScroll = true;
+
+        param = new TransitionEventParam(viewPort.currentItem.column, viewPort.currentItem.column, oldRow, targetRowIndex);
+        $.event.trigger(CUSTOM_EVENTS.verticalTransitionAfter, param);
       });
     };
 
@@ -696,7 +734,6 @@
 
     _plugin.toggleVerticalArrowVisibility = function (currentRowIndex, targetRowIndex, targetColumnIndex, data) {
       var lastRowIndex = data.structure.columns[targetColumnIndex].numOfRows - 1;
-
       // when horizontal trasition takes place
       if (targetColumnIndex !== data.viewPort.currentItem.column) {
         updateVisibilityForHorizontalTransition(data.structure, targetRowIndex, lastRowIndex)
