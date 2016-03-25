@@ -15,23 +15,26 @@
     // Perhaps it can be optimized - Left property should be +- screen width value.
 
     // global custom events EXAMPLE HOW TO USE IT
-    $(document).bind("horizontal_transition:before", function (e, arg) {
-      console.log("horizontal_transition:before");
-      console.log(arg);
-    });
-    $(document).bind("vertical_transition:before", function (e, arg) {
-      console.log("vertical_transition:before" + arg);
-      console.log(arg);
-    });
-    $(document).bind("horizontal_transition:after", function (e, arg) {
-      console.log("horizontal_transition:after" + arg);
-      console.log(arg);
-    });
-    $(document).bind("vertical_transition:after", function (e, arg) {
-      console.log("vertical_transition:after" + arg);
-      console.log(arg);
-    });
-
+    //$(document).bind("horizontal_transition:before", function (e, arg) {
+    //  console.log("horizontal_transition:before");
+    //  console.log(arg);
+    //});
+    //$(document).bind("vertical_transition:before", function (e, arg) {
+    //  console.log("vertical_transition:before" + arg);
+    //  console.log(arg);
+    //});
+    //$(document).bind("horizontal_transition:after", function (e, arg) {
+    //  console.log("horizontal_transition:after" + arg);
+    //  console.log(arg);
+    //});
+    //$(document).bind("vertical_transition:after", function (e, arg) {
+    //  console.log("vertical_transition:after" + arg);
+    //  console.log(arg);
+    //});
+    //$(document).bind("vertical_scroll:row_changed", function (e, arg) {
+    //  console.log("vertical_scroll:row_changed" + arg);
+    //  console.log(arg);
+    //});
 
     //default options
     var OPTIONS = {
@@ -61,7 +64,8 @@
       horizontalTransitionBefore: 'horizontal_transition:before',
       horizontalTransitionAfter: 'horizontal_transition:after',
       verticalTransitionBefore: 'vertical_transition:before',
-      verticalTransitionAfter: 'vertical_transition:after'
+      verticalTransitionAfter: 'vertical_transition:after',
+      verticalScrollRowChanged: 'vertical_scroll:row_changed'
     };
 
     /////////////////////////////////////////
@@ -408,7 +412,7 @@
         };
 
         $(".dz-column").scroll(throttle(function () {
-          var st, currentColumn = viewPort.currentItem.column;
+          var st, param, currentColumn = viewPort.currentItem.column;
 
           // if only one row exists no need to do any calculations
           if (structure.columns[currentColumn].numOfRows === 1) {
@@ -438,6 +442,8 @@
                 _plugin.updateVerticalPaging(structure.$verticalPaging, viewPort.currentItem.row);
                 _plugin.toggleVerticalArrowVisibility(viewPort.prevItem.row, viewPort.currentItem.row, viewPort.currentItem.column, data);
 
+                param = new TransitionEventParam(viewPort.currentItem.column, viewPort.currentItem.column, viewPort.prevItem.row, viewPort.currentItem.row);
+                $.event.trigger(CUSTOM_EVENTS.verticalScrollRowChanged, param);
               }
             }
               // scroll up
@@ -457,6 +463,9 @@
                 structure.columns[currentColumn].currentRow = viewPort.currentItem.row;
                 _plugin.updateVerticalPaging(structure.$verticalPaging, viewPort.currentItem.row);
                 _plugin.toggleVerticalArrowVisibility(viewPort.nextItem.row, viewPort.currentItem.row, viewPort.currentItem.column, data);
+
+                param = new TransitionEventParam(viewPort.currentItem.column, viewPort.currentItem.column, viewPort.nextItem.row, viewPort.currentItem.row);
+                $.event.trigger(CUSTOM_EVENTS.verticalScrollRowChanged, param);
               }
             }
 
