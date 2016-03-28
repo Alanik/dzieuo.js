@@ -479,6 +479,7 @@
         $(window).on('resize', function () {
           setTimeout(function () {
             var winHalfHeight = _plugin.getHalfWindowHeight();
+            var columnObj = data.structure.columns[data.viewPort.currentItem.column];
 
             // horizontal arrows
             if (data.structure.numOfColumns > 1 && OPTIONS.initialize_horizontal_arrows_position) {
@@ -494,6 +495,14 @@
             // vertical arrows
             if (OPTIONS.initialize_vertical_arrows_position) {
               data.structure.$verticalNav.css('top', _plugin.getHalfWindowHeight() - (data.structure.$verticalNav.height() / 2));
+            }
+
+            // css overflow-y         
+            // if column div's height is less than the #dzieuo's height hide scrollbar
+            if (columnObj.$column.children().height() <= data.structure.$dzieuo.height()) {
+              columnObj.$column.css("overflow-y", "hidden");
+            } else {
+              columnObj.$column.css("overflow-y", "scroll");
             }
 
           }, 10);
@@ -801,7 +810,7 @@
       var columnObj = structure.columns[column];
 
       // if column div's height is less than the #dzieuo's height hide scrollbar
-      if (structure.columns[column].$column.children().height() <= structure.$dzieuo.height()) {
+      if (columnObj.$column.children().height() <= structure.$dzieuo.height()) {
         columnObj.$column.css("overflow-y", "hidden");
       } else {
         columnObj.$column.css("overflow-y", "scroll");
