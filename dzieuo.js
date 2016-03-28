@@ -386,7 +386,7 @@
         data.structure.$dzieuo.on("click", ".dz-vertical-paging-item", function () {
           var targetRow = $(this).data("row");
 
-          if (!data.viewPort.isAnimationInProgressY && data.viewPort.currentItem.row !== targetRow) {
+          if (!data.viewPort.isAnimationInProgressY) {
             data.scroll.shouldCalculateScroll = false;
             _plugin.beginVerticalTransition(data, targetRow);
           }
