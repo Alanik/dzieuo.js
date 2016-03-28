@@ -102,7 +102,7 @@
           var hash = parseInt(window.location.hash.substr(1));
 
           if (hash >= 0 && hash < data.structure.numOfColumns) {
-            if (self.hash < hash || self.hash > hash) {
+            if (self.hash !== hash) {
               setUpArrowHrefAndBeginTransition();
             } else {
               self.hash = 0;
@@ -114,8 +114,6 @@
             self.hash = hash;
 
             if (!data.viewPort.isAnimationInProgressX) {
-              data.structure.$prevHorizontalArrow.attr('href', "#" + (self.hash - 1));
-              data.structure.$nextHorizontalArrow.attr('href', "#" + (self.hash + 1));
               beginHorizontalTransitionFn(data, self.hash)
             }
           };
@@ -479,7 +477,6 @@
         $(window).on('resize', function () {
           setTimeout(function () {
             var winHalfHeight = _plugin.getHalfWindowHeight();
-            var columnObj = data.structure.columns[data.viewPort.currentItem.column];
 
             // horizontal arrows
             if (data.structure.numOfColumns > 1 && OPTIONS.initialize_horizontal_arrows_position) {
@@ -498,12 +495,7 @@
             }
 
             // css overflow-y         
-            // if column div's height is less than the #dzieuo's height hide scrollbar
-            if (columnObj.$column.children().height() <= data.structure.$dzieuo.height()) {
-              columnObj.$column.css("overflow-y", "hidden");
-            } else {
-              columnObj.$column.css("overflow-y", "scroll");
-            }
+            _plugin.setUpColumnCssOverflow(data.viewPort.currentItem.column, data.structure);
 
           }, 10);
         });
@@ -581,6 +573,9 @@
 
           data.scroll.lastScrollTop = columnObj.$column.scrollTop();
 
+          data.structure.$prevHorizontalArrow.attr('href', "#" + (targetColumnIndex - 1));
+          data.structure.$nextHorizontalArrow.attr('href', "#" + (targetColumnIndex + 1));
+
           param = new TransitionEventParam(oldColumn, targetColumnIndex, structure.columns[oldColumn].currentRow, structure.columns[targetColumnIndex].currentRow);
           $.event.trigger(CUSTOM_EVENTS.horizontalTransitionAfter, param);
         });
@@ -596,11 +591,7 @@
         columnObj.$column.show();
 
         // if column div's height is less than the dzieuo's height hide scrollbar
-        if (columnObj.$column.children().height() <= structure.$dzieuo.height()) {
-          columnObj.$column.css("overflow-y", "hidden");
-        } else {
-          columnObj.$column.css("overflow-y", "scroll");
-        }
+        _plugin.setUpColumnCssOverflow(targetColumnIndex, structure);
 
         viewPort.nextItem.column = viewPort.currentItem.column;
         viewPort.prevItem.column = targetColumnIndex;
@@ -631,6 +622,9 @@
           _plugin.rowToggleCurrentClass(data, viewPort.currentItem.row, false);
 
           data.scroll.lastScrollTop = columnObj.$column.scrollTop();
+
+          structure.$prevHorizontalArrow.attr('href', "#" + (targetColumnIndex - 1));
+          structure.$nextHorizontalArrow.attr('href', "#" + (targetColumnIndex + 1));
 
           param = new TransitionEventParam(oldColumn, targetColumnIndex, structure.columns[oldColumn].currentRow, structure.columns[targetColumnIndex].currentRow);
           $.event.trigger(CUSTOM_EVENTS.horizontalTransitionAfter, param);
