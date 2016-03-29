@@ -512,23 +512,49 @@
         if ((data.viewPort.currentItem.column + 1) === data.structure.numOfColumns) {
           return false;
         }
-
-        reCreateVerticalPaging(data, targetColumn);
-        _plugin.updateVerticalPaging(data.structure.$verticalPaging, data.structure.columns[targetColumn].currentRow);
-        _plugin.toggleVerticalArrowVisibility(data.viewPort.currentItem.row, data.structure.columns[targetColumn].currentRow, targetColumn, data);
-        updateHorizontalPaging(data.structure.$horizontalPaging, targetColumn);
+        beforeMove(data, targetColumn);
         moveToNext(data, targetColumn);
       }
       else {
         if ((data.viewPort.currentItem.column === 0)) {
           return false;
         }
+        beforeMove(data, targetColumn);
+        moveToPrevious(data, targetColumn);
+      }
 
+      function beforeMove(data, targetColumn) {
         reCreateVerticalPaging(data, targetColumn);
         _plugin.updateVerticalPaging(data.structure.$verticalPaging, data.structure.columns[targetColumn].currentRow);
         _plugin.toggleVerticalArrowVisibility(data.viewPort.currentItem.row, data.structure.columns[targetColumn].currentRow, targetColumn, data);
         updateHorizontalPaging(data.structure.$horizontalPaging, targetColumn);
-        moveToPrevious(data, targetColumn);
+
+        function updateHorizontalPaging($paging, targetColumn) {
+          var className = "current";
+          var $item = $paging.find(".dz-horizontal-paging-item.current");
+          $item.removeClass(className);
+          var $nextItem = $paging.find('[data-column="' + targetColumn + '"]');
+          $nextItem.addClass(className);
+        }
+
+        function reCreateVerticalPaging(data, targetColumn) {
+          var html, structure = data.structure, verticalPagingItemClass = "dz-vertical-paging-item";
+
+          structure.$verticalPaging.empty();
+
+          if (!OPTIONS.hide_vertical_paging_when_single_row || structure.columns[targetColumn].numOfRows > 1) {
+            html = "<a class='" + verticalPagingItemClass + "' href='#" + targetColumn + "' data-row='0'>";
+
+            for (var i = 1; i < structure.columns[targetColumn].numOfRows; i++) {
+              html += "<a class='" + verticalPagingItemClass + "' href='#" + targetColumn + "' data-row='" + i + "'>";
+            }
+            structure.$verticalPaging.append(html);
+          }
+
+          if (OPTIONS.initialize_vertical_paging_position) {
+            structure.$verticalPaging.css('top', _plugin.getHalfWindowHeight() - (structure.$verticalPaging.height() / 2));
+          }
+        }
       }
 
       function moveToNext(data, targetColumnIndex) {
@@ -629,33 +655,6 @@
           param = new TransitionEventParam(oldColumn, targetColumnIndex, structure.columns[oldColumn].currentRow, structure.columns[targetColumnIndex].currentRow);
           $.event.trigger(CUSTOM_EVENTS.horizontalTransitionAfter, param);
         });
-      }
-
-      function updateHorizontalPaging($paging, targetColumnIndex) {
-        var className = "current";
-        var $item = $paging.find(".dz-horizontal-paging-item.current");
-        $item.removeClass(className);
-        var $nextItem = $paging.find('[data-column="' + targetColumnIndex + '"]');
-        $nextItem.addClass(className);
-      }
-
-      function reCreateVerticalPaging(data, column) {
-        var html, structure = data.structure, verticalPagingItemClass = "dz-vertical-paging-item";
-
-        structure.$verticalPaging.empty();
-
-        if (!OPTIONS.hide_vertical_paging_when_single_row || structure.columns[column].numOfRows > 1) {
-          html = "<a class='" + verticalPagingItemClass + "' href='#" + column + "' data-row='0'>";
-
-          for (var i = 1; i < structure.columns[column].numOfRows; i++) {
-            html += "<a class='" + verticalPagingItemClass + "' href='#" + column + "' data-row='" + i + "'>";
-          }
-          structure.$verticalPaging.append(html);
-        }
-
-        if (OPTIONS.initialize_vertical_paging_position) {
-          structure.$verticalPaging.css('top', _plugin.getHalfWindowHeight() - (structure.$verticalPaging.height() / 2));
-        }
       }
 
       function toggleHorizontalArrowVisibility(targetIndex, currentIndex, structure) {
