@@ -566,32 +566,31 @@
 
         columnObj.$column.show();
 
-        _plugin.setUpColumnCssOverflow(targetColumnIndex, data.structure);
+        _plugin.setUpColumnCssOverflow(targetColumnIndex, structure);
 
-        viewPort.prevItem.column = data.viewPort.currentItem.column;
-        viewPort.nextItem.column = targetColumnIndex;
-        viewPort.currentItem.column = targetColumnIndex;
-
-        toggleHorizontalArrowVisibility(targetColumnIndex, viewPort.prevItem.column, structure);
+        toggleHorizontalArrowVisibility(targetColumnIndex, viewPort.currentItem.column, structure);
 
         columnObj.$column.css({ "left": viewPort.horizontalSlideOffset - left, "top": 0 });
 
         viewPort.isAnimationInProgressX = true;
 
-        param = new TransitionEventParam(viewPort.prevItem.column, viewPort.currentItem.column, viewPort.currentItem.row, structure.columns[viewPort.currentItem.column].currentRow);
+        param = new TransitionEventParam(viewPort.currentItem.column, targetColumnIndex, viewPort.currentItem.row, structure.columns[targetColumnIndex].currentRow);
         $.event.trigger(CUSTOM_EVENTS.horizontalTransitionBefore, param);
 
         structure.$viewPort.animate({
           "left": (left - viewPort.horizontalSlideOffset)
         }, OPTIONS.horizontal_animation_speed, OPTIONS.horizontal_animation_easing, function () {
 
-          viewPort.prevItem.get$Column().hide();
+          viewPort.currentItem.get$Column().hide();
+
           viewPort.prevItem.column = targetColumnIndex - 1;
-          viewPort.nextItem.column++;
+          viewPort.prevItem.row = columnObj.currentRow - 1;
+
+          viewPort.nextItem.column = targetColumnIndex + 1;
+          viewPort.nextItem.row = columnObj.currentRow + 1;
 
           viewPort.currentItem.row = columnObj.currentRow;
-          viewPort.prevItem.row = columnObj.currentRow - 1;
-          viewPort.nextItem.row = columnObj.currentRow + 1;
+          viewPort.currentItem.column = targetColumnIndex;
 
           viewPort.isAnimationInProgressX = false;
 
@@ -599,8 +598,8 @@
 
           data.scroll.lastScrollTop = columnObj.$column.scrollTop();
 
-          data.structure.$prevHorizontalArrow.attr('href', "#" + (targetColumnIndex - 1));
-          data.structure.$nextHorizontalArrow.attr('href', "#" + (targetColumnIndex + 1));
+          structure.$prevHorizontalArrow.attr('href', "#" + (targetColumnIndex - 1));
+          structure.$nextHorizontalArrow.attr('href', "#" + (targetColumnIndex + 1));
 
           param = new TransitionEventParam(oldColumn, targetColumnIndex, structure.columns[oldColumn].currentRow, structure.columns[targetColumnIndex].currentRow);
           $.event.trigger(CUSTOM_EVENTS.horizontalTransitionAfter, param);
@@ -619,29 +618,28 @@
         // if column div's height is less than the dzieuo's height hide scrollbar
         _plugin.setUpColumnCssOverflow(targetColumnIndex, structure);
 
-        viewPort.nextItem.column = viewPort.currentItem.column;
-        viewPort.prevItem.column = targetColumnIndex;
-        viewPort.currentItem.column = targetColumnIndex;
-
-        toggleHorizontalArrowVisibility(targetColumnIndex, viewPort.nextItem.column, structure);
+        toggleHorizontalArrowVisibility(targetColumnIndex, viewPort.currentItem.column, structure);
 
         columnObj.$column.css({ "left": (-viewPort.horizontalSlideOffset) - left, "top": 0 });
 
         viewPort.isAnimationInProgressX = true;
 
-        param = new TransitionEventParam(viewPort.nextItem.column, viewPort.currentItem.column, viewPort.currentItem.row, structure.columns[viewPort.currentItem.column].currentRow);
+        param = new TransitionEventParam(viewPort.currentItem.column, targetColumnIndex, viewPort.currentItem.row, structure.columns[targetColumnIndex].currentRow);
         $.event.trigger(CUSTOM_EVENTS.horizontalTransitionBefore, param);
 
         structure.$viewPort.animate({
           "left": (left + viewPort.horizontalSlideOffset)
         }, OPTIONS.horizontal_animation_speed, OPTIONS.horizontal_animation_easing, function () {
-          viewPort.nextItem.get$Column().hide();
+          viewPort.currentItem.get$Column().hide();
+
+          viewPort.prevItem.row = columnObj.currentRow - 1;
+          viewPort.prevItem.column = targetColumnIndex - 1;
+
           viewPort.nextItem.column = targetColumnIndex + 1;
-          viewPort.prevItem.column--;
+          viewPort.nextItem.row = columnObj.currentRow + 1;
 
           viewPort.currentItem.row = columnObj.currentRow;
-          viewPort.nextItem.row = columnObj.currentRow + 1;
-          viewPort.prevItem.row = columnObj.currentRow - 1;
+          viewPort.currentItem.column = targetColumnIndex;
 
           viewPort.isAnimationInProgressX = false;
 
@@ -676,18 +674,17 @@
     };
 
     _plugin.beginVerticalTransition = function (data, targetRowIndex) {
-      var param, viewPort = data.viewPort, scroll = data.scroll, structure = data.structure, moveDown = false, newScrollTop;
+      var oldRow, param, viewPort = data.viewPort, scroll = data.scroll, structure = data.structure, moveDown = false, newScrollTop;
       var $column = structure.columns[viewPort.currentItem.column].$column;
       var $targetRow = structure.columns[viewPort.currentItem.column].rows[targetRowIndex];
-      var oldRow;
+
 
       if (viewPort.currentItem.row < targetRowIndex) {
-        if ((viewPort.currentItem.row) === structure.columns[viewPort.currentItem.column].numOfRows - 1) {
+        if (viewPort.currentItem.row === structure.columns[viewPort.currentItem.column].numOfRows - 1) {
           return false;
         }
         moveDown = true;
       } else {
-
         if (viewPort.currentItem.row === 0) {
           return false;
         }
@@ -728,6 +725,7 @@
         }
 
         structure.columns[viewPort.currentItem.column].currentRow = viewPort.currentItem.row;
+
         scroll.lastScrollTop = newScrollTop;
         scroll.shouldCalculateScroll = true;
 
@@ -795,7 +793,6 @@
       if (isVerticalTransition) {
         data.viewPort.currentItem.get$Row().toggleClass('current');
       }
-
       data.structure.columns[data.viewPort.currentItem.column].rows[targetRowIndex].addClass('current');
     };
 
