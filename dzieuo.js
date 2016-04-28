@@ -145,7 +145,7 @@
         nextItem: null, // new ViewPortItem(_data.structure, 1, 0 )
         isAnimationInProgressX: false,
         isAnimationInProgressY: false,
-        horizontalSlideOffset: 0
+        getHorizontalSlideOffset: null
       },
       scroll: {
         lastScrollTop: 0,
@@ -195,7 +195,9 @@
         row = data.structure.columns[0].numOfRows == 1 ? 0 : 1;
 
         data.viewPort.nextItem = new ViewPortItem(data, col, row);
-        data.viewPort.horizontalSlideOffset = data.structure.$dzieuo.width() - 20;
+        data.viewPort.getHorizontalSlideOffset = function () {
+          return (data.structure.$dzieuo.width() - 20);
+        }
       },
       // 3
       setUpViewPort: function (structure) {
@@ -500,7 +502,7 @@
           }, 10);
         });
       },
-
+      //13
       updatePagingAndArrowsOnOrientationChange: function (data) {
         $(window).on("orientationchange", function (event) {
           var winHalfHeight = _plugin.getHalfWindowHeight();
@@ -597,7 +599,7 @@
 
         toggleHorizontalArrowVisibility(targetColumnIndex, viewPort.currentItem.column, structure);
 
-        columnObj.$column.css({ "left": viewPort.horizontalSlideOffset - left, "top": 0 });
+        columnObj.$column.css({ "left": viewPort.getHorizontalSlideOffset() - left, "top": 0 });
 
         viewPort.isAnimationInProgressX = true;
 
@@ -605,7 +607,7 @@
         $.event.trigger(CUSTOM_EVENTS.horizontalTransitionBefore, param);
 
         structure.$viewPort.animate({
-          "left": (left - viewPort.horizontalSlideOffset)
+          "left": (left - viewPort.getHorizontalSlideOffset())
         }, OPTIONS.horizontal_animation_speed, OPTIONS.horizontal_animation_easing, function () {
 
           viewPort.currentItem.get$Column().hide();
@@ -647,7 +649,7 @@
 
         toggleHorizontalArrowVisibility(targetColumnIndex, viewPort.currentItem.column, structure);
 
-        columnObj.$column.css({ "left": (-viewPort.horizontalSlideOffset) - left, "top": 0 });
+        columnObj.$column.css({ "left": (-viewPort.getHorizontalSlideOffset()) - left, "top": 0 });
 
         viewPort.isAnimationInProgressX = true;
 
@@ -655,7 +657,7 @@
         $.event.trigger(CUSTOM_EVENTS.horizontalTransitionBefore, param);
 
         structure.$viewPort.animate({
-          "left": (left + viewPort.horizontalSlideOffset)
+          "left": (left + viewPort.getHorizontalSlideOffset())
         }, OPTIONS.horizontal_animation_speed, OPTIONS.horizontal_animation_easing, function () {
           viewPort.currentItem.get$Column().hide();
 
