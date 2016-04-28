@@ -499,7 +499,34 @@
 
           }, 10);
         });
+      },
+
+      updatePagingAndArrowsOnOrientationChange: function (data) {
+        $(window).on("orientationchange", function (event) {
+          var winHalfHeight = _plugin.getHalfWindowHeight();
+
+          // horizontal arrows
+          if (data.structure.numOfColumns > 1 && OPTIONS.initialize_horizontal_arrows_position) {
+            data.structure.$prevHorizontalArrow.css('top', winHalfHeight - (data.structure.$prevHorizontalArrow.height() / 2));
+            data.structure.$nextHorizontalArrow.css('top', winHalfHeight - (data.structure.$nextHorizontalArrow.height() / 2));
+          }
+
+          // vertical paging
+          if (OPTIONS.initialize_vertical_paging_position) {
+            data.structure.$verticalPaging.css('top', winHalfHeight - (data.structure.$verticalPaging.height() / 2));
+          }
+
+          // vertical arrows
+          if (OPTIONS.initialize_vertical_arrows_position) {
+            data.structure.$verticalNav.css('top', _plugin.getHalfWindowHeight() - (data.structure.$verticalNav.height() / 2));
+          }
+
+          // css overflow-y         
+          _plugin.setUpColumnCssOverflow(data.viewPort.currentItem.column, data.structure);
+
+        });
       }
+
     };
 
     ///////////////////////////////////////////
@@ -827,6 +854,7 @@
     _plugin.setUpClickHandlers(_data);
     _plugin.updateVerticalPagingOnWindowScroll(_data);
     _plugin.updatePagingAndArrowsOnWindowResize(_data);
+    _plugin.updatePagingAndArrowsOnOrientationChange(_data);
 
     _plugin.URL_ROUTER.initialize();
 
