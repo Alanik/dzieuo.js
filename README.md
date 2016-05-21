@@ -138,6 +138,12 @@ $('#dzieuo').dzieuo({
       hide_horizontal_paging_when_single_column: true
     });
 ```
+## Styling
+
+All styles for the plugin are found in dzieuo.css file.
+
+**Important:** *If you plan to override default options `'prev_arrow_content'` and `'next_arrow_content'` with paths to your custom horizontal arrow images then make sure you set the proper height in css for `#dzPrevArrow` and `#dzNextArrow`. Height of these containers should be the same as the height of the image.*
+
 ## Events
 
 Dzieuo provides five events that allow us to process our own custom logic at the beginning and at the end of a slide animation. 
@@ -196,5 +202,14 @@ Listening to the events:
       console.log(arg);
     });
 ```
+## Hardware acceleration
 
+Dzieuo uses the jQuery Animate Enhanced plugin for additional slide animations and for smooth transitions using CSS instead of JavaScript which jQuery Animate Enhanced takes care of.
+
+Checkout jQuery Animate Enhanced at https://github.com/benbarnett/jquery-animate-enhanced
+
+## Inspiration
+
+Superslides plugin was the source of inspiration and knowledge to write my own slider with additional 2D functionality. 
+Checkout Superslides plugin at http://archive.nicinabox.com/superslides/#1 
 
