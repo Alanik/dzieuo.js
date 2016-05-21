@@ -1,9 +1,15 @@
 # Dzieuo.js 
-Dzieuo.js is a two dimentional slider plugin for jQuery. It allowes both vertical and horizontal transitions between slides.
+Dzieuo.js is a two dimentional slider plugin for jQuery. It allowes both vertical and horizontal transition between slides.
 
 ## Usage
+First make sure you have included script references for jQuery, jQuery.animate-enchanced.min.js and dzieuo.js such as:
 
- In order to start dzieuo plugin simply call .dzieuo() method on a selected html element that will act as a container of the slider.
+```
+  <script src="Lib/jquery-2.0.3.min.js"></script>
+  <script src="Lib/jquery.animate-enhanced.min.js"></script>
+  <script src="dzieuo.js"></script>
+```
+ To start dzieuo plugin simply call `.dzieuo()` method on a selected html element that will act as a container of the slider.
  
 ```
 // start plugin with default options
