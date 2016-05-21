@@ -59,7 +59,7 @@ So HTML markup could be like this:
       </div>
       <div class="dz-row">
         horizontal slide #3, vertical slide #3
-      </div>|
+      </div>
     </div>
   </div>
 ```
@@ -84,7 +84,7 @@ So HTML markup could be like this:
 | horizontal_animation_easing  | string   | `'slide'` | Specifies what kind of animation will be used for horizontal transition. Look below for a list of available animations.
 | vertical_animation_easing  | string   | `'slide'` | Specifies what kind of animation will be used for vertical transition. Look below for a list of available animations.
 
-Available animation_easing option values are: 
+Available animation_easing option values: 
 
 * `'slide'`
 * `'bounce'`
@@ -118,7 +118,7 @@ Available animation_easing option values are:
 ## Example
 
 ``` 
-// start plugin with provided options
+// start slider with options
 
 $('#dzieuo').dzieuo({
       prev_arrow_content: '<img src="Images/arrow-left.png" alt="left navigation arrow">',
@@ -137,5 +137,64 @@ $('#dzieuo').dzieuo({
       hide_vertical_paging_when_single_row: true,
       hide_horizontal_paging_when_single_column: true
     });
+```
+## Events
+
+Dzieuo provides five events that allow us to process our own custom logic at the beginning and at the end of a slide animation. 
+
+| Event name       | When is fired  |
+| ------------- |----|
+| `'horizontal_transition:before'` | Fires right before each horizontal animation
+| `'horizontal_transition:after'` | Fires right after each horizontal animation
+| `'vertical_transition:before'` | Fires right before each vertical animation
+| `'vertical_transition:after'` | Fires right after each vertical animation
+| `'vertical_scroll:row_changed'` | Fires when a row element (vertical slide) is set as the current one. For example when user scrolls down to a new vertical slide element.
+
+Each fired event holds a transitionEventParam object that can be used to find out which slides are being animated.
+Properties of transitionEventParam object:
+
+| name       | type  | description |
+| ------------- |----|------|
+| `currentColumn` | number | Contains index of the current column element (horizontal slide).
+| `targetColumn` | number| Contains index of the target column element (horizontal slide).
+| `currentRow` | number| Contains index of the current row element (vertical slide).
+| `targetRow` | number| Contains index of the target row element (vertical slide).
+
+Index values start from 0.
+
+**Important:** *For events `'horizontal_transition:after'`,`'vertical_transition:after'` and `'vertical_scroll:row_changed'`
+value of currentRow/currentColumn (depending whether it is a horizontal or vertical transition) will be the index of the previous slide (the slide that we just moved from) and the index of the current slide (the slide that we just moved to) will now be found in the targetRow/targetColumn property.*
+
+
+## Example
+
+Listening to the events:
 
 ```
+// an example how we can intercept these events
+// e - is the native jQuery event param object
+// arg - is the dzieuo's custom transitionEventParam object
+
+    $(document).bind("horizontal_transition:before", function (e, arg) {
+      console.log("horizontal_transition:before");
+      console.log(arg);
+    });
+    $(document).bind("vertical_transition:before", function (e, arg) {
+      console.log("vertical_transition:before");
+      console.log(arg);
+    });
+    $(document).bind("horizontal_transition:after", function (e, arg) {
+      console.log("horizontal_transition:after");
+      console.log(arg);
+    });
+    $(document).bind("vertical_transition:after", function (e, arg) {
+      console.log("vertical_transition:after");
+      console.log(arg);
+    });
+    $(document).bind("vertical_scroll:row_changed", function (e, arg) {
+      console.log("vertical_scroll:row_changed");
+      console.log(arg);
+    });
+```
+
+
