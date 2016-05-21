@@ -1,6 +1,4 @@
 # Dzieuo.js 
-jQuery 2D slider plugin.
-
 Dzieuo.js is a two dimentional slider plugin for jQuery. It allowes both vertical and horizontal transition between slides.
 
 ## Usage
@@ -73,3 +71,33 @@ So HTML markup could be like this:
 | initialize_vertical_paging_position     | bool   |   `true` | Specifies if plugin should automatically calculate and set vertical's paging position so that it will be placed in the middle of the screen. It will also recalculate and reset its position on window resize event as well as on orientation changed event for mobile devices so that the vertical paging container will always be placed in the middle of the screen. Setting this option to `false` will give user the power to place vertical paging wherever he wants by styling its appropriate css container and the plugin will not override its position. **Side note:** *Generally it is recomended to leave this option as it is (`true`) unless you really want to position vertical paging yourself.*
 | row_scroll_padding_top     | number   | `0` | Specifies the offset distance (in pixels) from the top of the current slide.
 | scroll_calculation_interval | number   | `50` |  Specifies the interval time (in miliseconds) of when the plugin should recalculate scroll position. Whenever a scroll event is detected (if user is scrolling a page) then plugin recalculates scroll position at a specified interval thus marking proper vertical paging element as the current one. It may happen that if user scrolls really fast (in less than the specified time amount option value) then the plugin may miss calculation of scroll position thus we may see incorrect vertical paging element set as the current one. It would be ideal to have this option value set as low as possible but there is a scroll performance loss to consider. If we set this value to something too low then calculations will be fired so often while user is scrolling resulting in a choppy, uneven/unsmooth scrolling. **Side note:** *The default value of 50 seems to be just fine for most purposes so it is recommended to leave it like that.* 
+| horizontal_animation_easing  | string   | `'slide'` | Specifies what kind of animation will be used for horizontal transition. Available option values are: 
+* `'slide'`
+* `'bounce'`
+* `'linear'`
+* `'swing'`
+* `'easeInQuad'`
+* `'easeInCubic'`
+* `'easeInQuart'`
+* `'easeInQuint'`
+* `'easeInSine'`
+* `'easeInExpo'`
+* `'easeInCirc'`
+* `'easeInBack'`
+* `'easeOutQuad'`
+* `'easeOutCubic'`
+* `'easeOutQuart'`
+* `'easeOutQuint'`
+* `'easeOutSine'`
+* `'easeOutExpo'`
+* `'easeOutCirc'`
+* `'easeOutBack'`
+* `'easeInOutQuad'`
+* `'easeInOutCubic'`
+* `'easeInOutQuart'`
+* `'easeInOutQuint'`
+* `'easeInOutQuint'`
+* `'easeInOutExpo'`
+* `'easeInOutCirc'`
+* `'easeInOutBack'`
+| row_scroll_padding_top     | number   | `0` | Specifies the offset distance (in pixels) from the top of the current slide.
