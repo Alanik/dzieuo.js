@@ -14,28 +14,6 @@
     // 1. #viewPort adds up css left property value resulting in a very big negative or positive css left value.
     // Perhaps it can be optimized - Left property should be +- screen width value.
 
-    // global custom events EXAMPLE HOW TO USE IT
-    //$(document).bind("horizontal_transition:before", function (e, arg) {
-    //  console.log("horizontal_transition:before");
-    //  console.log(arg);
-    //});
-    //$(document).bind("vertical_transition:before", function (e, arg) {
-    //  console.log("vertical_transition:before" + arg);
-    //  console.log(arg);
-    //});
-    //$(document).bind("horizontal_transition:after", function (e, arg) {
-    //  console.log("horizontal_transition:after" + arg);
-    //  console.log(arg);
-    //});
-    //$(document).bind("vertical_transition:after", function (e, arg) {
-    //  console.log("vertical_transition:after" + arg);
-    //  console.log(arg);
-    //});
-    //$(document).bind("vertical_scroll:row_changed", function (e, arg) {
-    //  console.log("vertical_scroll:row_changed" + arg);
-    //  console.log(arg);
-    //});
-
     //default options
     var OPTIONS = {
       prev_arrow_content: '<img src="Images/arrow-left.png" alt="left navigation arrow">',
