@@ -1,5 +1,5 @@
 # Dzieuo.js 
-Dzieuo.js is a two dimentional slider plugin for jQuery. It allowes both vertical and horizontal transition between slides.
+Dzieuo.js is a two dimentional slider plugin for jQuery. It allowes both vertical and horizontal transitions between slides.
 
 ## Usage
 
@@ -75,8 +75,8 @@ So HTML markup could be like this:
 | vertical_animation_speed     | number   | `800` | Specifies vertical animation speed (in milliseconds).
 | hide_vertical_paging_when_single_row | bool | `true` | Specifies if vertical paging control should be hidden when only one slide (single `.row` element) is present.
 | hide_horizontal_paging_when_single_column | bool | `true` | Specifies if horizontal paging control should be hidden when only one slide (single `.column` element) is present.
-| horizontal_animation_easing  | string   | `'slide'` | Specifies what kind of animation will be used for horizontal transition.
-| vertical_animation_easing  | string   | `'slide'` | Specifies what kind of animation will be used for vertical transition.
+| horizontal_animation_easing  | string   | `'slide'` | Specifies what kind of animation will be used for horizontal transition. Look below for a list of available animations.
+| vertical_animation_easing  | string   | `'slide'` | Specifies what kind of animation will be used for vertical transition. Look below for a list of available animations.
 
 Available animation_easing option values are: 
 
@@ -109,4 +109,27 @@ Available animation_easing option values are:
 * `'easeInOutCirc'`
 * `'easeInOutBack'`
 
+## Example
 
+``` 
+// start plugin with provided options
+
+$('#dzieuo').dzieuo({
+      prev_arrow_content: '<img src="Images/arrow-left.png" alt="left navigation arrow">',
+      next_arrow_content: '<img src="Images/arrow-right.png" alt="right navigation arrow">',
+      up_arrow_content: '<img src="Images/arrow-up.png" alt="up navigation arrow">',
+      down_arrow_content: '<img src="Images/arrow-down.png" alt="down navigation arrow">',
+      initialize_horizontal_arrows_position: true,
+      initialize_vertical_arrows_position: true,
+      initialize_vertical_paging_position: true,
+      row_scroll_padding_top: 0,
+      scroll_calculation_interval: 50,
+      horizontal_animation_easing: 'slide',
+      horizontal_animation_speed: 800,
+      vertical_animation_easing: 'slide',
+      vertical_animation_speed: 800,
+      hide_vertical_paging_when_single_row: true,
+      hide_horizontal_paging_when_single_column: true
+    });
+
+```
