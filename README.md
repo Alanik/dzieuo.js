@@ -9,7 +9,7 @@ First make sure you have included script references for jQuery, jQuery.animate-e
   <script src="Lib/jquery.animate-enhanced.min.js"></script>
   <script src="dzieuo.js"></script>
 ```
- To start dzieuo plugin simply call `.dzieuo()` method on a selected html element that will act as a container of the slider.
+ To start dzieuo plugin simply call `.dzieuo()` method on a selected html element that will act as a container for the slider.
  
 ```
 // start plugin with default options
@@ -18,11 +18,11 @@ First make sure you have included script references for jQuery, jQuery.animate-e
 
 ```
 ## HTML Structure
-Proper CSS classes need to be added to html elements to set up vertical and horizontal slides.
+Proper CSS classes must be added to html elements to set up vertical and horizontal slides.
 - ```.dz-column``` - elements with this class will be treated as horizontal slides.
 - ```.dz-row``` - elements with this class will be treated as vertical slides.
 
-**Important:**  *```.dz-row``` elements need to be inside ```.dz-column``` element and a ```.dz-column``` element needs to contain at least one ```.dz-row``` element.*
+**Important:**  *```.dz-row``` elements must be inside ```.dz-column``` element and a ```.dz-column``` element must contain at least one ```.dz-row``` element.*
 
 So HTML markup could be like this:
 
