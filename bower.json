@@ -1,0 +1,25 @@
+{
+  "name": "dzieuo.js",
+  "main": "dzieuo.js",
+  "description": "jQuery 2D slider plugin",
+  "keywords": [
+    "jquery",
+    "slider",
+    "plugin"
+  ],
+  "authors": [
+    "Alan Budziński"
+  ],
+  "license": "MIT",
+  "homepage": "dzieuo.io",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "jquery": "^2.2.4"
+  }
+}
