@@ -31,7 +31,7 @@ Proper CSS classes must be added to html elements to set up vertical and horizon
 - ```.dz-column``` - elements with this class will be treated as horizontal slides.
 - ```.dz-row``` - elements with this class will be treated as vertical slides.
 
-**Important:**  *```.dz-row``` elements must be inside ```.dz-column``` element and a ```.dz-column``` element must contain at least one ```.dz-row``` element.*
+**Important:**  *```.dz-column``` elements must be nested inside slider's container as first direct descendants. It means that the provided slider's container must only contain one or more ```.dz-column``` elements and nothing else. Siblings of ```.dz-column``` elements must be other ```.dz-column``` elements. Each  ```.dz-column``` element must contain at least one ```.dz-row``` element as first direct descendant. Similarly siblings of ```.dz-row``` elements must be other ```.dz-row``` elements*.
 
 So HTML markup could be like this:
 
@@ -150,6 +150,8 @@ $('#dzieuo').dzieuo({
 ## Styling
 
 All styles for the plugin are found in dzieuo.css file.
+
+.dz-row elements have initial height of 400px in css so feel free to remove/change this value to what you want.
 
 **Important:** *If you plan to override default options `'prev_arrow_content'` and `'next_arrow_content'` with your own image tags then make sure you set the proper height in css for `#dzPrevArrow` and `#dzNextArrow`. Height of these containers should be the same as the height of the image. These heights are used by the plugin to place horizontal arrows in the middle of the screen.*
 
