@@ -536,6 +536,8 @@
         _plugin.toggleVerticalArrowVisibility(data.viewPort.currentItem.row, data.structure.columns[targetColumn].currentRow, targetColumn, data);
         updateHorizontalPaging(data.structure.$horizontalPaging, targetColumn);
 
+        data.scroll.shouldCalculateScroll = false;
+
         function updateHorizontalPaging($paging, targetColumn) {
           var className = "current";
           var $item = $paging.find(".dz-horizontal-paging-item.current");
@@ -604,6 +606,7 @@
           _plugin.rowToggleCurrentClass(data, viewPort.currentItem.row, false);
 
           data.scroll.lastScrollTop = columnObj.$column.scrollTop();
+          data.scroll.shouldCalculateScroll = true;
 
           structure.$prevHorizontalArrow.attr('href', "#" + (targetColumnIndex - 1));
           structure.$nextHorizontalArrow.attr('href', "#" + (targetColumnIndex + 1));
@@ -653,6 +656,7 @@
           _plugin.rowToggleCurrentClass(data, viewPort.currentItem.row, false);
 
           data.scroll.lastScrollTop = columnObj.$column.scrollTop();
+          data.scroll.shouldCalculateScroll = true;
 
           structure.$prevHorizontalArrow.attr('href', "#" + (targetColumnIndex - 1));
           structure.$nextHorizontalArrow.attr('href', "#" + (targetColumnIndex + 1));
