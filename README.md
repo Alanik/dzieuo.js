@@ -90,6 +90,7 @@ So HTML markup could be like this:
 | vertical_animation_speed     | number   | `800` | Specifies vertical animation speed (in milliseconds).
 | hide_vertical_paging_when_single_row | bool | `true` | Specifies if vertical paging control should be hidden when only one slide (single `.row` element) is present.
 | hide_horizontal_paging_when_single_column | bool | `true` | Specifies if horizontal paging control should be hidden when only one slide (single `.column` element) is present.
+| full_screen_mode  | bool  | `'false'` | Sets ```.dz-row``` element's height to window height so slides will be "full screen".
 | horizontal_animation_easing  | string   | `'slide'` | Specifies what kind of animation will be used for horizontal transition. Look below for a list of available animations.
 | vertical_animation_easing  | string   | `'slide'` | Specifies what kind of animation will be used for vertical transition. Look below for a list of available animations.
 
