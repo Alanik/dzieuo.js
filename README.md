@@ -145,14 +145,15 @@ $('#dzieuo').dzieuo({
       vertical_animation_easing: 'slide',
       vertical_animation_speed: 800,
       hide_vertical_paging_when_single_row: true,
-      hide_horizontal_paging_when_single_column: true
+      hide_horizontal_paging_when_single_column: true,
+      full_screen_mode: false
     });
 ```
 ## Styling
 
 All styles for the plugin are found in dzieuo.css file.
 
-.dz-row elements have initial height of 400px in css so feel free to remove/change this value to what you want.
+`'.dz-row'` elements have initial height of 400px in css so feel free to remove/change this value to what you want.
 
 **Important:** *If you plan to override default options `'prev_arrow_content'` and `'next_arrow_content'` with your own image tags then make sure you set the proper height in css for `#dzPrevArrow` and `#dzNextArrow`. Height of these containers should be the same as the height of the image. These heights are used by the plugin to place horizontal arrows in the middle of the screen.*
 
