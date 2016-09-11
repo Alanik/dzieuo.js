@@ -34,7 +34,7 @@
 			hide_vertical_paging_when_single_row: true,
 			hide_horizontal_paging_when_single_column: true,
 			full_screen_mode: false,
-			min_row_height: 0
+			row_height: 0
 		}
 
 		$.extend( OPTIONS, opts );
@@ -552,17 +552,17 @@
 						{
 							windowH = $( window ).height();
 
-							if ( OPTIONS.min_row_height > windowH )
+							if ( OPTIONS.row_height > windowH )
 							{
-								_plugin.setRowHeight( _data.structure, OPTIONS.min_row_height );
+								_plugin.setRowHeight( _data.structure, OPTIONS.row_height );
 							} else
 							{
 								_plugin.setRowHeight( _data.structure, windowH );
 							}
 						}
-						else if ( OPTIONS.min_row_height )
+						else if ( OPTIONS.row_height )
 						{
-							_plugin.setRowHeight( _data.structure, OPTIONS.min_row_height );
+							_plugin.setRowHeight( _data.structure, OPTIONS.row_height );
 						}
 
 					}, 10 );
@@ -966,17 +966,17 @@
 		{
 			var windowH = $( window ).height();
 
-			if ( OPTIONS.min_row_height > windowH )
+			if ( OPTIONS.row_height > windowH )
 			{
-				_plugin.setRowHeight( _data.structure, OPTIONS.min_row_height );
+				_plugin.setRowHeight( _data.structure, OPTIONS.row_height );
 			} else
 			{
 				_plugin.setRowHeight( _data.structure, windowH );
 			}
 		}
-		else if ( OPTIONS.min_row_height )
+		else if ( OPTIONS.row_height )
 		{
-			_plugin.setRowHeight( _data.structure, OPTIONS.min_row_height );
+			_plugin.setRowHeight( _data.structure, OPTIONS.row_height );
 		}
 
 		_plugin.URL_ROUTER.initialize();
