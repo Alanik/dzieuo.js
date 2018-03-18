@@ -73,7 +73,7 @@ So HTML markup could be like this:
   </div>
 ```
 
-##Options
+## Options
 
 | Option       | Type  | Default  | Description |
 | ------------- |----|-------------| -----|
